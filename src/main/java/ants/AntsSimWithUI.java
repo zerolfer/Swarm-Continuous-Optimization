@@ -2,20 +2,21 @@ package ants;
 
 import sim.display.Console;
 import sim.display.Controller;
-import sim.display.Display2D;
 import sim.display.GUIState;
+import sim.display3d.Display3D;
 import sim.engine.SimState;
-import sim.portrayal.continuous.ContinuousPortrayal2D;
-import sim.portrayal.simple.OvalPortrayal2D;
+import sim.portrayal3d.continuous.ContinuousPortrayal3D;
+import sim.portrayal3d.simple.SpherePortrayal3D;
+import sim.portrayal3d.simple.WireFrameBoxPortrayal3D;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class AntsSimWithUI extends GUIState {
 
-    public Display2D display2D;
+    public Display3D display3D;
     public JFrame displayFrame;
-    ContinuousPortrayal2D spacePortrayal = new ContinuousPortrayal2D();
+    ContinuousPortrayal3D spacePortrayal = new ContinuousPortrayal3D();
+    WireFrameBoxPortrayal3D wireFrameP;
 
     public AntsSimWithUI() {
         super(new AntsSim(System.currentTimeMillis()));
@@ -50,25 +51,37 @@ public class AntsSimWithUI extends GUIState {
         AntsSim colony = (AntsSim) state;
 
         spacePortrayal.setField(colony.getSeachSpace());
-        spacePortrayal.setPortrayalForAll(new OvalPortrayal2D());
+        spacePortrayal.setPortrayalForAll(new SpherePortrayal3D());
+//        groundPortrayal.setField(new CubePortrayal3D());
 
-        display2D.reset();
-        display2D.setBackdrop(Color.white);
+        //        display3D.setBackdrop(Color.white);
+        display3D.createSceneGraph();
+        display3D.reset();
 
-        display2D.repaint();
+//        display3D.repaint();
     }
 
     public void init(Controller controller) {
 
         super.init(controller);
-        display2D = new Display2D(600, 600, this);
-        display2D.setClipping(false);
 
-        displayFrame = display2D.createFrame();
+        AntsSim sim = (AntsSim) state;
+        display3D = new Display3D(600, 600, this);
+        wireFrameP = new WireFrameBoxPortrayal3D(0, 0, 0, sim.getSeachSpace().width, sim.getSeachSpace().height,
+                0);
+//        display3D.setClipping(false);
+
+        double width = 100;
+        display3D.translate(-width / 2d, -width / 2d, 0);
+        display3D.scale(2d / width);
+
+
+        displayFrame = display3D.createFrame();
         displayFrame.setTitle(getName());
         controller.registerFrame(displayFrame);
         displayFrame.setVisible(true);
-        display2D.attach(spacePortrayal, "Space");
+        display3D.attach(spacePortrayal, "Space");
+        display3D.attach(wireFrameP, "Space Delimiter");
     }
 
     @Override
@@ -76,6 +89,7 @@ public class AntsSimWithUI extends GUIState {
         super.quit();
         if (displayFrame != null) displayFrame.dispose();
         displayFrame = null;
-        display2D = null;
+        display3D = null;
     }
+
 }

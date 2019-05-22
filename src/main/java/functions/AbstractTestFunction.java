@@ -8,8 +8,12 @@ abstract class AbstractTestFunction implements TestFunction {
 
     @Override
     public double fitness(Double2D location) {
-        double r1 = f1(location.x);
-        double valorG = g(location.y);
+        return fitness(location.x, location.y);
+    }
+
+    public double fitness(double x, double y) {
+        double r1 = f1(x);
+        double valorG = g(y);
         double r2 = valorG * h(r1, valorG);
         return resume(r1, r2);
     }
