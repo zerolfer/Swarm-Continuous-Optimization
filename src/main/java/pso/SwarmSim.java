@@ -1,4 +1,11 @@
 package pso;
 
-public class SwarmSim {
+import sim.engine.SimState;
+
+public class SwarmSim extends SimState {
+    public SwarmSim(long seed) {
+        super(seed);
+    }
+
+
 }
