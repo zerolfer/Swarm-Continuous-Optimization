@@ -30,7 +30,10 @@ public class Robot implements Steppable {
         Double2D socialData = raw[0];
         Double2D newPosition = swarm.space.getObjectLocation(this);
 
+        System.out.println(toString()+" at ("+newPosition.x+", "+newPosition.y+")");
 //        writePheromones(currentPosition, );
+
+//        if(swarm.bestPosition==null||Utils.esMejor(f(swarm.bestPosition),f(newPosition))) // TODO:a implementar
     }
 
     private Double2D[] readPheromones(SwarmRobotSim st, Double2D currentPosition) {
