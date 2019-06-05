@@ -5,21 +5,25 @@ import sim.display.Controller;
 import sim.display.Display2D;
 import sim.display.GUIState;
 import sim.engine.SimState;
+import sim.portrayal.SimplePortrayal2D;
 import sim.portrayal.continuous.ContinuousPortrayal2D;
+import sim.portrayal.grid.ObjectGridPortrayal2D;
 import sim.portrayal.grid.SparseGridPortrayal2D;
 import sim.portrayal.simple.OvalPortrayal2D;
+import sim.portrayal.simple.RectanglePortrayal2D;
 import sim.portrayal3d.grid.SparseGrid2DPortrayal3D;
 import sim.portrayal3d.simple.Arrow;
 
 import javax.swing.*;
 import java.awt.*;
+import java.net.CookieHandler;
 
 public class SwarmRobotsWithUI extends GUIState {
 
     public Display2D display;
     public JFrame displayFrame;
     ContinuousPortrayal2D spacePortrayal = new ContinuousPortrayal2D();
-    SparseGridPortrayal2D pheromonesPortrayal = new SparseGridPortrayal2D();
+    ObjectGridPortrayal2D pheromonesPortrayal = new ObjectGridPortrayal2D();
 
     public static void main(String[] args) {
         SwarmRobotsWithUI vid = new SwarmRobotsWithUI();
@@ -57,7 +61,7 @@ public class SwarmRobotsWithUI extends GUIState {
         pheromonesPortrayal.setField(swarm.pheromoneGrid);
         spacePortrayal.setPortrayalForAll(new OvalPortrayal2D());
 
-        pheromonesPortrayal.setPortrayalForAll(new ContinuousPortrayal2D());
+        pheromonesPortrayal.setPortrayalForAll(new RectanglePortrayal2D(Color.black, false)/*Double2DPortrayal2D()*/);
 
         display.reset();
 //        display.setBackdrop(Color.black);

@@ -2,6 +2,7 @@ package robots;
 
 import sim.engine.SimState;
 import sim.field.continuous.Continuous2D;
+import sim.field.grid.ObjectGrid2D;
 import sim.util.Double2D;
 import sim.util.Int2D;
 
@@ -12,13 +13,13 @@ public class SwarmRobotSim extends SimState {
     private int y_max = 10;
     Continuous2D space = new Continuous2D(precisionFactor, x_max, y_max);
     //    SparseGrid2D pheromoneGrid = new SparseGrid2D(precisionFactor*x_max, precisionFactor*y_max);
-    Double2DGrid pheromoneGrid = new Double2DGrid(precisionFactor * x_max, precisionFactor * y_max);
+    ObjectGrid2D pheromoneGrid = new ObjectGrid2D(precisionFactor * x_max, precisionFactor * y_max);
 
-    private int numRobots = 5;
+    private int numRobots = 30;
 
-    private double inertiaWeight = 1;
-    private double selfLearningFactor = 1;
-    private double socialLearningFactor = 1;
+    private double inertiaWeight = .5;
+    private double selfLearningFactor = 0;
+    private double socialLearningFactor = .5;
     private double maxVelocity = 2; // TODO: tune parameters
 
     static Double2D bestPosition; //TODO: guarda la solucion final del algoritmo
@@ -40,9 +41,9 @@ public class SwarmRobotSim extends SimState {
         // initialize the pheromone matrix
         for (int i = 0; i < pheromoneGrid.getWidth(); i++) {
             for (int j = 0; j < pheromoneGrid.getHeight(); j++) {
-                Double2D vector = new Double2D(-2 * (i - 8), -2 * (j - 8)); // GRADIENT INICIALIZATION
+                Double2D vector = new Double2D(-(i - 8), -(j - 8)); // GRADIENT INICIALIZATION
                 if (vector.length() > maxVelocity) vector.resize(maxVelocity);
-                pheromoneGrid.setObjectLocation(vector, new Int2D(i, j));
+                pheromoneGrid.set(i,j, vector);
             }
         }
 
