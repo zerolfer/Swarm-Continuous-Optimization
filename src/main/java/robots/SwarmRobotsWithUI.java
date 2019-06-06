@@ -5,6 +5,8 @@ import sim.display.Controller;
 import sim.display.Display2D;
 import sim.display.GUIState;
 import sim.engine.SimState;
+import sim.portrayal.Inspector;
+import sim.portrayal.Portrayal;
 import sim.portrayal.SimplePortrayal2D;
 import sim.portrayal.continuous.ContinuousPortrayal2D;
 import sim.portrayal.grid.ObjectGridPortrayal2D;
@@ -20,10 +22,10 @@ import java.net.CookieHandler;
 
 public class SwarmRobotsWithUI extends GUIState {
 
-    public Display2D display;
-    public JFrame displayFrame;
-    ContinuousPortrayal2D spacePortrayal = new ContinuousPortrayal2D();
-    ObjectGridPortrayal2D pheromonesPortrayal = new ObjectGridPortrayal2D();
+    private Display2D display;
+    private JFrame displayFrame;
+    private ContinuousPortrayal2D spacePortrayal = new ContinuousPortrayal2D();
+    private ObjectGridPortrayal2D pheromonesPortrayal = new ObjectGridPortrayal2D();
 
     public static void main(String[] args) {
         SwarmRobotsWithUI vid = new SwarmRobotsWithUI();
@@ -35,6 +37,7 @@ public class SwarmRobotsWithUI extends GUIState {
         super(state);
     }
 
+    @SuppressWarnings("WeakerAccess")
     public SwarmRobotsWithUI() {
         super(new SwarmRobotSim(System.currentTimeMillis()));
     }
@@ -62,6 +65,7 @@ public class SwarmRobotsWithUI extends GUIState {
         spacePortrayal.setPortrayalForAll(new OvalPortrayal2D());
 
         pheromonesPortrayal.setPortrayalForAll(new RectanglePortrayal2D(Color.black, false)/*Double2DPortrayal2D()*/);
+        pheromonesPortrayal.setPortrayalForAll(new ArrowGridPortrayal2D(Color.black,false));
 
         display.reset();
 //        display.setBackdrop(Color.black);
@@ -89,5 +93,17 @@ public class SwarmRobotsWithUI extends GUIState {
         if (displayFrame != null) displayFrame.dispose();
         displayFrame = null;
         display = null;
+    }
+
+    @Override
+    public Object getSimulationInspectedObject() {
+        return state;
+    }
+
+    @Override
+    public Inspector getInspector() {
+        Inspector inspector = super.getInspector();
+        inspector.setVolatile(true); // force updating every timestep
+        return inspector;
     }
 }

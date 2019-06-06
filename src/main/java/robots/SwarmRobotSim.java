@@ -1,29 +1,32 @@
 package robots;
 
+import functions.TestFunction;
+import functions.TestFuntion1;
 import sim.engine.SimState;
 import sim.field.continuous.Continuous2D;
 import sim.field.grid.ObjectGrid2D;
 import sim.util.Double2D;
-import sim.util.Int2D;
 
 public class SwarmRobotSim extends SimState {
 
+    //
+    private int numRobots = 300;
+    private int xy_max = 50; // max value that x and y can take
     private int precisionFactor = 1; // size of each cell, (1 = 1x1, 2= 0.5x0.5, 3=0.25x0.25)
-    private int x_max = 10;
-    private int y_max = 10;
-    Continuous2D space = new Continuous2D(precisionFactor, x_max, y_max);
-    //    SparseGrid2D pheromoneGrid = new SparseGrid2D(precisionFactor*x_max, precisionFactor*y_max);
-    ObjectGrid2D pheromoneGrid = new ObjectGrid2D(precisionFactor * x_max, precisionFactor * y_max);
 
-    private int numRobots = 30;
+    Continuous2D space = new Continuous2D(precisionFactor, xy_max, xy_max);
+    ObjectGrid2D pheromoneGrid = new ObjectGrid2D(precisionFactor * xy_max, precisionFactor * xy_max);
+
+    TestFunction function = new TestFuntion1();
 
     private double inertiaWeight = .5;
     private double selfLearningFactor = 0;
     private double socialLearningFactor = .5;
-    private double maxVelocity = 2; // TODO: tune parameters
+    private double maxVelocity = 1; // TODO: tune parameters
 
     static Double2D bestPosition; //TODO: guarda la solucion final del algoritmo
 
+    @SuppressWarnings("WeakerAccess")
     public SwarmRobotSim(long seed) {
         super(seed);
     }
@@ -33,20 +36,48 @@ public class SwarmRobotSim extends SimState {
         System.exit(0);
     }
 
+    private void usePredefinedPheromoneMap() {
+        inertiaWeight = .5;
+        selfLearningFactor = 0;
+        socialLearningFactor = .5;
+        buildPheromoneMap = true;
+    }
+
+    private void buildPheromoneMap() {
+        inertiaWeight = .5;
+        selfLearningFactor = 0;
+        socialLearningFactor = 0;
+        buildPheromoneMap = false;
+
+    }
     @Override
     public void start() {
         super.start();
         space.clear();
 
-        // initialize the pheromone matrix
+        // set configuration
+        usePredefinedPheromoneMap();
+//        buildPheromoneMap();
+
+        /////////////////////////////////////
+        // initialize the pheromone matrix //
+        /////////////////////////////////////
         for (int i = 0; i < pheromoneGrid.getWidth(); i++) {
             for (int j = 0; j < pheromoneGrid.getHeight(); j++) {
-                Double2D vector = new Double2D(-(i - 8), -(j - 8)); // GRADIENT INICIALIZATION
+                Double2D vector = new Double2D(0, 0);
+
+                if (buildPheromoneMap)
+                    vector = new Double2D(-(i - 8), -(j - 8)); // GRADIENT INICIALIZATION
+
                 if (vector.length() > maxVelocity) vector.resize(maxVelocity);
-                pheromoneGrid.set(i,j, vector);
+
+                pheromoneGrid.set(i, j, vector);
             }
         }
 
+        //////////////////////////////////////
+        // initialize and locate the robots //
+        //////////////////////////////////////
         for (int i = 0; i < numRobots; i++) {
 //            Int2D pos = new Int2D(random.nextInt(space.getWidth()), random.nextInt(space.getHeight()));
             Double2D pos = new Double2D(random.nextDouble() * space.getWidth(), random.nextDouble() * space.getHeight());
@@ -58,6 +89,7 @@ public class SwarmRobotSim extends SimState {
 
 
     }
+
 
     public int getNumRobots() {
         return numRobots;
@@ -106,4 +138,6 @@ public class SwarmRobotSim extends SimState {
     public void setPrecisionFactor(int precisionFactor) {
         this.precisionFactor = precisionFactor;
     }
+
+    boolean buildPheromoneMap = false;
 }

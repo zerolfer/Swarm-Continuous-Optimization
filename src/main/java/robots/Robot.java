@@ -2,14 +2,15 @@ package robots;
 
 import sim.engine.SimState;
 import sim.engine.Steppable;
-import sim.util.*;
-import sim.util.Double2D;
 import sim.util.Double2D;
 
 public class Robot implements Steppable {
 
     private Double2D velocity;
     private Double2D localBestPosition;
+
+    private double evaporationFactor = 0.5; // TODO: tune parameters
+    private double superpositionFactor = 1;
 
     Robot(Double2D position) {
         this(position, new Double2D(1, 1));
@@ -28,12 +29,24 @@ public class Robot implements Steppable {
 
         Double2D[] raw = readPheromones(swarm, currentPosition);
         Double2D socialData = raw[0];
-        Double2D newPosition = swarm.space.getObjectLocation(this);
+        Double2D newPosition = raw[1];
 
-        System.out.println(toString()+" at ("+newPosition.x+", "+newPosition.y+")");
-//        writePheromones(currentPosition, );
+        System.out.println(toString() + " at (" + newPosition.x + ", " + newPosition.y + ")");
+
+        if (!swarm.buildPheromoneMap)
+            writePheromones(currentPosition, newPosition, socialData, swarm);
+
+        swarm.space.setObjectLocation(this, newPosition);
 
 //        if(swarm.bestPosition==null||Utils.esMejor(f(swarm.bestPosition),f(newPosition))) // TODO:a implementar
+    }
+
+    private void writePheromones(Double2D currentPosition, Double2D newPosition, Double2D readData, SwarmRobotSim swarm) {
+        double f = swarm.function.fitness(newPosition) - swarm.function.fitness(currentPosition);
+        Double2D d = newPosition.subtract(currentPosition);
+        Double2D newTrail = d.multiply(f / Math.pow(d.length(), 2));
+        Double2D newPheromoneTrail = readData.multiply(1 - evaporationFactor).add(newTrail.multiply(superpositionFactor));
+        writeTag(newPheromoneTrail, currentPosition, swarm); // vector addition
     }
 
     private Double2D[] readPheromones(SwarmRobotSim st, Double2D currentPosition) {
@@ -60,8 +73,6 @@ public class Robot implements Steppable {
             if (newPosition.y >= st.space.getHeight())
                 newPosition = new Double2D(newPosition.x, st.space.getHeight() - 1);
 
-            st.space.setObjectLocation(this, newPosition);
-
             return new Double2D[]{socialData, newPosition};
 
         } catch (IllegalStateException ex) {
@@ -82,9 +93,12 @@ public class Robot implements Steppable {
     }
 
     private Double2D readTag(SwarmRobotSim st, Double2D currentPosition) throws IllegalStateException {
-        Double2D discretizedPosition = currentPosition.multiply(st.getPrecisionFactor());
-        return (Double2D) st.pheromoneGrid.get(
-                (int) discretizedPosition.x, (int) discretizedPosition.y
-        );
+        Double2D position = currentPosition.multiply(st.getPrecisionFactor());
+        return (Double2D) st.pheromoneGrid.get((int) position.x, (int) position.y); // discretized
     }
+
+    private void writeTag(Double2D newPheromoneTrail, Double2D currentPosition, SwarmRobotSim swarm) {
+        swarm.pheromoneGrid.set((int) currentPosition.x, (int) currentPosition.y, newPheromoneTrail); // discretized
+    }
+
 }
