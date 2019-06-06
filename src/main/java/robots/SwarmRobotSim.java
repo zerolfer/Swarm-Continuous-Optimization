@@ -1,7 +1,7 @@
 package robots;
 
 import functions.TestFunction;
-import functions.TestFuntion1;
+import functions.TestFuntion2;
 import sim.engine.SimState;
 import sim.field.continuous.Continuous2D;
 import sim.field.grid.ObjectGrid2D;
@@ -17,7 +17,7 @@ public class SwarmRobotSim extends SimState {
     Continuous2D space = new Continuous2D(precisionFactor, xy_max, xy_max);
     ObjectGrid2D pheromoneGrid = new ObjectGrid2D(precisionFactor * xy_max, precisionFactor * xy_max);
 
-    TestFunction function = new TestFuntion1();
+    TestFunction function = new TestFuntion2();
 
     private double inertiaWeight = .5;
     private double selfLearningFactor = 0;
@@ -44,20 +44,21 @@ public class SwarmRobotSim extends SimState {
     }
 
     private void buildPheromoneMap() {
-        inertiaWeight = .5;
+        inertiaWeight = 1;
         selfLearningFactor = 0;
         socialLearningFactor = 0;
         buildPheromoneMap = false;
 
     }
+
     @Override
     public void start() {
         super.start();
         space.clear();
 
-        // set configuration
-        usePredefinedPheromoneMap();
-//        buildPheromoneMap();
+//        // set configuration
+//        usePredefinedPheromoneMap();
+        buildPheromoneMap();
 
         /////////////////////////////////////
         // initialize the pheromone matrix //
@@ -67,7 +68,7 @@ public class SwarmRobotSim extends SimState {
                 Double2D vector = new Double2D(0, 0);
 
                 if (buildPheromoneMap)
-                    vector = new Double2D(-(i - 8), -(j - 8)); // GRADIENT INICIALIZATION
+                    vector = function.gradient(i, j); // GRADIENT INICIALIZATION
 
                 if (vector.length() > maxVelocity) vector.resize(maxVelocity);
 
@@ -135,8 +136,16 @@ public class SwarmRobotSim extends SimState {
         return precisionFactor;
     }
 
-    public void setPrecisionFactor(int precisionFactor) {
-        this.precisionFactor = precisionFactor;
+    public int getXy_max() {
+        return xy_max;
+    }
+
+    public TestFunction getFunction() {
+        return function;
+    }
+
+    public static Double2D getBestPosition() {
+        return bestPosition;
     }
 
     boolean buildPheromoneMap = false;

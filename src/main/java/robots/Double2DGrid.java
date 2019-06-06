@@ -1,6 +1,5 @@
 package robots;
 
-import sim.util.Bag;
 import sim.util.Double2D;
 import sim.util.Int2D;
 

@@ -27,4 +27,9 @@ abstract class AbstractTestFunction implements TestFunction {
     protected abstract double g(double x2);
 
     protected abstract double h(double f1, double g);
+
+    @Override
+    public Double2D gradient(int x, int y) {
+        throw new RuntimeException("Gradient function not implemented for this test function");
+    }
 }

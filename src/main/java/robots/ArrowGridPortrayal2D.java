@@ -34,8 +34,8 @@ public class ArrowGridPortrayal2D extends RectanglePortrayal2D {
             int x = (int) (info.draw.x);
             int y = (int) (info.draw.y);
 //            endPoint.resize()
-            int endX = x + (int) endPoint.getX()*2;
-            int endY = y + (int) endPoint.getY()*2;
+            int endX = x + (int) endPoint.getX() * 2;
+            int endY = y + (int) endPoint.getY() * 2;
             graphics.drawLine(x, y,
                     /*endX > info.draw.width ? (int) info.draw.width : */endX,
                     /*endY > info.draw.height ? (int) info.draw.height : */endY

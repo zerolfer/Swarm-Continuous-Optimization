@@ -6,19 +6,13 @@ import sim.display.Display2D;
 import sim.display.GUIState;
 import sim.engine.SimState;
 import sim.portrayal.Inspector;
-import sim.portrayal.Portrayal;
-import sim.portrayal.SimplePortrayal2D;
 import sim.portrayal.continuous.ContinuousPortrayal2D;
 import sim.portrayal.grid.ObjectGridPortrayal2D;
-import sim.portrayal.grid.SparseGridPortrayal2D;
 import sim.portrayal.simple.OvalPortrayal2D;
 import sim.portrayal.simple.RectanglePortrayal2D;
-import sim.portrayal3d.grid.SparseGrid2DPortrayal3D;
-import sim.portrayal3d.simple.Arrow;
 
 import javax.swing.*;
 import java.awt.*;
-import java.net.CookieHandler;
 
 public class SwarmRobotsWithUI extends GUIState {
 
@@ -65,7 +59,7 @@ public class SwarmRobotsWithUI extends GUIState {
         spacePortrayal.setPortrayalForAll(new OvalPortrayal2D());
 
         pheromonesPortrayal.setPortrayalForAll(new RectanglePortrayal2D(Color.black, false)/*Double2DPortrayal2D()*/);
-        pheromonesPortrayal.setPortrayalForAll(new ArrowGridPortrayal2D(Color.black,false));
+        pheromonesPortrayal.setPortrayalForAll(new ArrowGridPortrayal2D(Color.black, false));
 
         display.reset();
 //        display.setBackdrop(Color.black);
