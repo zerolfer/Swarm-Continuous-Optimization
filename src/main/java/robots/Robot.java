@@ -31,22 +31,35 @@ public class Robot implements Steppable {
         Double2D socialData = raw[0];
         Double2D newPosition = raw[1];
 
-        System.out.println(toString() + " at (" + newPosition.x + ", " + newPosition.y + ")");
 
         if (!swarm.buildPheromoneMap)
             writePheromones(currentPosition, newPosition, socialData, swarm);
 
+//        if (swarm.exploreMode) {
+//            double x = currentPosition.x + velocity.x, y = currentPosition.y + velocity.y;
+//            if (x > swarm.space.width) x = swarm.space.width - 1;
+//            if (y > swarm.space.height) y = swarm.space.height - 1;
+//            newPosition = new Double2D(x, y);
+//        }
+
         swarm.space.setObjectLocation(this, newPosition);
+        System.out.println(toString() + " at (" + newPosition.x + ", " + newPosition.y + ")");
 
 //        if(swarm.bestPosition==null||Utils.esMejor(f(swarm.bestPosition),f(newPosition))) // TODO:a implementar
     }
 
     private void writePheromones(Double2D currentPosition, Double2D newPosition, Double2D readData, SwarmRobotSim swarm) {
+
         double f = swarm.function.fitness(newPosition) - swarm.function.fitness(currentPosition);
-        Double2D d = newPosition.subtract(currentPosition);
-        Double2D newTrail = d.multiply(f / Math.pow(d.length(), 2));
+        if (f > 0) this.localBestPosition = newPosition; // update best local position
+
+        Double2D vectorAtoB = newPosition.subtract(currentPosition);
+        Double2D newTrail;
+        if (Math.pow(vectorAtoB.length(), 2) == 0) newTrail = vectorAtoB.multiply(0);
+        else newTrail = vectorAtoB.multiply(f / Math.pow(vectorAtoB.length(), 2));
         Double2D newPheromoneTrail = readData.multiply(1 - evaporationFactor).add(newTrail.multiply(superpositionFactor));
         writeTag(newPheromoneTrail, currentPosition, swarm); // vector addition
+
     }
 
     private Double2D[] readPheromones(SwarmRobotSim st, Double2D currentPosition) {
@@ -101,4 +114,19 @@ public class Robot implements Steppable {
         swarm.pheromoneGrid.set((int) currentPosition.x, (int) currentPosition.y, newPheromoneTrail); // discretized
     }
 
+    public Double2D getVelocity() {
+        return velocity;
+    }
+
+    public Double2D getLocalBestPosition() {
+        return localBestPosition;
+    }
+
+    public double getEvaporationFactor() {
+        return evaporationFactor;
+    }
+
+    public double getSuperpositionFactor() {
+        return superpositionFactor;
+    }
 }

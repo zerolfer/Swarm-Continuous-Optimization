@@ -9,9 +9,10 @@ import sim.util.Double2D;
 
 public class SwarmRobotSim extends SimState {
 
+    boolean exploreMode = true;
     //
-    private int numRobots = 300;
-    private int xy_max = 50; // max value that x and y can take
+    private int numRobots = 1;
+    private int xy_max = 10; // max value that x and y can take
     private int precisionFactor = 1; // size of each cell, (1 = 1x1, 2= 0.5x0.5, 3=0.25x0.25)
 
     Continuous2D space = new Continuous2D(precisionFactor, xy_max, xy_max);
@@ -146,6 +147,14 @@ public class SwarmRobotSim extends SimState {
 
     public static Double2D getBestPosition() {
         return bestPosition;
+    }
+
+    public boolean isExploreMode() {
+        return exploreMode;
+    }
+
+    public void setExploreMode(boolean exploreMode) {
+        this.exploreMode = exploreMode;
     }
 
     boolean buildPheromoneMap = false;

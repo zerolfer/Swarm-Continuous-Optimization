@@ -8,6 +8,7 @@ import sim.engine.SimState;
 import sim.portrayal.Inspector;
 import sim.portrayal.continuous.ContinuousPortrayal2D;
 import sim.portrayal.grid.ObjectGridPortrayal2D;
+import sim.portrayal.simple.CircledPortrayal2D;
 import sim.portrayal.simple.OvalPortrayal2D;
 import sim.portrayal.simple.RectanglePortrayal2D;
 
@@ -56,7 +57,11 @@ public class SwarmRobotsWithUI extends GUIState {
         SwarmRobotSim swarm = (SwarmRobotSim) state;
         spacePortrayal.setField(swarm.space);
         pheromonesPortrayal.setField(swarm.pheromoneGrid);
-        spacePortrayal.setPortrayalForAll(new OvalPortrayal2D());
+        spacePortrayal.setPortrayalForAll(
+                new CircledPortrayal2D(
+                        new OvalPortrayal2D(),
+                        0, 1.1, Color.blue, true)
+        );
 
         pheromonesPortrayal.setPortrayalForAll(new RectanglePortrayal2D(Color.black, false)/*Double2DPortrayal2D()*/);
         pheromonesPortrayal.setPortrayalForAll(new ArrowGridPortrayal2D(Color.black, false));
