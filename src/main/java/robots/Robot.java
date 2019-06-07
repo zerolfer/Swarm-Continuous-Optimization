@@ -50,9 +50,19 @@ public class Robot implements Steppable {
 
     private void writePheromones(Double2D currentPosition, Double2D newPosition, Double2D readData, SwarmRobotSim swarm) {
 
-        double f = swarm.function.fitness(newPosition) - swarm.function.fitness(currentPosition);
-        if (f > 0) this.localBestPosition = newPosition; // update best local position
+        double fitness_newPosition = swarm.function.fitness(newPosition);
+        double f = fitness_newPosition - swarm.function.fitness(currentPosition);
+        if (f > 0) {
+            this.localBestPosition = newPosition; // update best local position
 
+            // if the solution is better than the best of the swarm, we safe the data
+            // in order to know the final result found by the system
+            if (fitness_newPosition > swarm.getBestFitness()) {
+                swarm.setBestPosition(localBestPosition);
+                swarm.setBestFitness(fitness_newPosition);
+            }
+
+        }
         Double2D vectorAtoB = newPosition.subtract(currentPosition);
         Double2D newTrail;
         if (Math.pow(vectorAtoB.length(), 2) == 0) newTrail = vectorAtoB.multiply(0);

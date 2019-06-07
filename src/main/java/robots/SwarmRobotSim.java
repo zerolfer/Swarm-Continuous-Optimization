@@ -12,7 +12,7 @@ public class SwarmRobotSim extends SimState {
     boolean exploreMode = true;
     //
     private int numRobots = 1;
-    private int xy_max = 10; // max value that x and y can take
+    private int xy_max = 50; // max value that x and y can take
     private int precisionFactor = 1; // size of each cell, (1 = 1x1, 2= 0.5x0.5, 3=0.25x0.25)
 
     Continuous2D space = new Continuous2D(precisionFactor, xy_max, xy_max);
@@ -21,7 +21,7 @@ public class SwarmRobotSim extends SimState {
     TestFunction function = new TestFuntion2();
 
     private double inertiaWeight = .5;
-    private double selfLearningFactor = 0;
+    private double selfLearningFactor = .5;
     private double socialLearningFactor = .5;
     private double evaporationFactor = 0.5; // TODO: tune parameters
     private double superpositionFactor = 1;
@@ -29,7 +29,8 @@ public class SwarmRobotSim extends SimState {
 
     private double maxVelocity = 1; // TODO: tune parameters
 
-    static Double2D bestPosition; //TODO: guarda la solucion final del algoritmo
+    private Double2D bestPosition;
+    private double bestFitness;
 
     @SuppressWarnings("WeakerAccess")
     public SwarmRobotSim(long seed) {
@@ -60,7 +61,8 @@ public class SwarmRobotSim extends SimState {
     public void start() {
         super.start();
         space.clear();
-
+        this.bestPosition = null;
+        this.bestFitness = 0;
 //        // set configuration
 //        usePredefinedPheromoneMap();
 //        buildPheromoneMap();
@@ -149,8 +151,21 @@ public class SwarmRobotSim extends SimState {
         return function;
     }
 
-    public static Double2D getBestPosition() {
+    public Double2D getBestPosition() {
         return bestPosition;
+    }
+
+
+    void setBestPosition(Double2D bestPosition) {
+        this.bestPosition = bestPosition;
+    }
+
+    public double getBestFitness() {
+        return bestFitness;
+    }
+
+    void setBestFitness(double bestFitness) {
+        this.bestFitness = bestFitness;
     }
 
     public boolean isExploreMode() {
@@ -178,4 +193,5 @@ public class SwarmRobotSim extends SimState {
     public void setSuperpositionFactor(double superpositionFactor) {
         this.superpositionFactor = superpositionFactor;
     }
+
 }

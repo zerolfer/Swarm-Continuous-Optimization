@@ -64,7 +64,7 @@ public class SwarmRobotsWithUI extends GUIState {
                                 new OvalPortrayal2D(),
                                 0, 1.1, Color.blue, true),
                         0, 0, -0.45, 0.07, new Font("SansSerif", Font.BOLD, 15),
-                        LabelledPortrayal2D.ALIGN_LEFT, null, Color.PINK, false)
+                        LabelledPortrayal2D.ALIGN_LEFT, null, Color.MAGENTA, false)
 
 
         );
