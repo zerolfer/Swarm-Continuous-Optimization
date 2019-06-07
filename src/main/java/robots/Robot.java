@@ -30,6 +30,23 @@ public class Robot implements Steppable {
         Double2D socialData = raw[0];
         Double2D newPosition = raw[1];
 
+        if (swarm.exploreMode) {
+            double vel_x = swarm.random.nextDouble() * swarm.getMaxVelocity(),
+                    vel_y = swarm.random.nextDouble() * swarm.getMaxVelocity();
+            if (swarm.random.nextBoolean()) vel_x *= -1;
+            if (swarm.random.nextBoolean()) vel_y *= -1;
+
+            double pos_x = vel_x + currentPosition.x,
+                    pos_y = vel_y + currentPosition.y;
+
+            if (pos_y >= swarm.pheromoneGrid.getHeight()) pos_y = swarm.pheromoneGrid.getHeight() - 1;
+            if (pos_x >= swarm.pheromoneGrid.getWidth()) pos_x = swarm.pheromoneGrid.getWidth() - 1;
+            if (pos_y < 0) pos_y = 0;
+            if (pos_x < 0) pos_x = 0;
+
+            newPosition = new Double2D(pos_x, pos_y);
+
+        }
 
         if (!swarm.buildPheromoneMap)
             writePheromones(currentPosition, newPosition, socialData, swarm);
@@ -43,7 +60,7 @@ public class Robot implements Steppable {
 
         swarm.space.setObjectLocation(this, newPosition);
         this.currentPosition = newPosition;
-        System.out.println(toString() + " at (" + newPosition.x + ", " + newPosition.y + ")");
+        System.out.println(getClass().getName() + "@" + Integer.toHexString(hashCode()) + "  at " + toString());
 
 //        if(swarm.bestPosition==null||Utils.esMejor(f(swarm.bestPosition),f(newPosition))) // TODO:a implementar
     }
@@ -83,7 +100,7 @@ public class Robot implements Steppable {
             velocity = calculateNewVelocity(currentPosition, socialData, st);
 
             // to ensure that the velocity don't increase too much
-            if (velocity.length() > st.getMaxVelocity()) velocity.resize(st.getMaxVelocity());
+            if (velocity.length() > st.getMaxVelocity()) velocity = velocity.resize(st.getMaxVelocity());
 
 
             // move the robot to the next position

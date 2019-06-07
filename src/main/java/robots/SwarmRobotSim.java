@@ -9,10 +9,10 @@ import sim.util.Double2D;
 
 public class SwarmRobotSim extends SimState {
 
-    boolean exploreMode = true;
+    boolean exploreMode = true; // TODO
     //
-    private int numRobots = 1;
-    private int xy_max = 50; // max value that x and y can take
+    private int numRobots = 50;
+    private int xy_max = 20; // max value that x and y can take
     private int precisionFactor = 1; // size of each cell, (1 = 1x1, 2= 0.5x0.5, 3=0.25x0.25)
 
     Continuous2D space = new Continuous2D(precisionFactor, xy_max, xy_max);
@@ -23,11 +23,11 @@ public class SwarmRobotSim extends SimState {
     private double inertiaWeight = .5;
     private double selfLearningFactor = .5;
     private double socialLearningFactor = .5;
-    private double evaporationFactor = 0.5; // TODO: tune parameters
-    private double superpositionFactor = 1;
+    private double evaporationFactor = .5;
+    private double superpositionFactor = .5;
 
 
-    private double maxVelocity = 1; // TODO: tune parameters
+    private double maxVelocity = 2;
 
     private Double2D bestPosition;
     private double bestFitness;
@@ -89,7 +89,13 @@ public class SwarmRobotSim extends SimState {
         for (int i = 0; i < numRobots; i++) {
 //            Int2D pos = new Int2D(random.nextInt(space.getWidth()), random.nextInt(space.getHeight()));
             Double2D pos = new Double2D(random.nextDouble() * space.getWidth(), random.nextDouble() * space.getHeight());
-            Robot bot = new Robot(pos);
+
+            // initial velocity:
+            double vel_x = random.nextDouble()*maxVelocity, vel_y = random.nextDouble()*maxVelocity;
+            if (random.nextBoolean()) vel_x *= -1;
+            if (random.nextBoolean()) vel_y *= -1;
+            Robot bot = new Robot(pos, new Double2D(vel_x, vel_y));
+
             space.setObjectLocation(bot, pos);
 
             schedule.scheduleRepeating(bot);
@@ -193,5 +199,6 @@ public class SwarmRobotSim extends SimState {
     public void setSuperpositionFactor(double superpositionFactor) {
         this.superpositionFactor = superpositionFactor;
     }
+
 
 }
