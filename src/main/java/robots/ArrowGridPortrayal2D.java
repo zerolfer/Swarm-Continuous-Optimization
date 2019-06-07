@@ -18,10 +18,21 @@ public class ArrowGridPortrayal2D extends RectanglePortrayal2D {
     @Override
     public void draw(Object object, Graphics2D graphics, DrawInfo2D info) {
         super.draw(object, graphics, info);
-        graphics.setColor(Color.RED);
-        graphics.setStroke(new BasicStroke(2));
 
         Double2D endPoint = (Double2D) object;
+
+//
+//        int r = (int) (100 + 155 * endPoint.length() / 10f);
+//        graphics.setColor(new Color(r > 255 ? 255 : r, 87, 51, 70));
+//
+//        graphics.fillRect((int) (info.draw.x - info.draw.width / 2.0), (int) (info.draw.y - info.draw.width / 2.0),
+//                (int) info.draw.width, (int) info.draw.height);
+
+
+        Color c = Color.RED;
+        graphics.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), 127));
+        graphics.setStroke(new BasicStroke(2));
+
 
 //        Point sw = new Point(info.clip.width/2, info.clip.height/2);
 //        Point ne = new Point(w*7/8, h/8);
@@ -47,7 +58,6 @@ public class ArrowGridPortrayal2D extends RectanglePortrayal2D {
 //                    info.draw.width, info.draw.height / 2.0);
 //            graphics.fill(line);
             graphics.setStroke(new BasicStroke(1));
-
         }
     }
 }
