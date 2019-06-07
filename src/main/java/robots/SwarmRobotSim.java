@@ -23,6 +23,10 @@ public class SwarmRobotSim extends SimState {
     private double inertiaWeight = .5;
     private double selfLearningFactor = 0;
     private double socialLearningFactor = .5;
+    private double evaporationFactor = 0.5; // TODO: tune parameters
+    private double superpositionFactor = 1;
+
+
     private double maxVelocity = 1; // TODO: tune parameters
 
     static Double2D bestPosition; //TODO: guarda la solucion final del algoritmo
@@ -59,7 +63,7 @@ public class SwarmRobotSim extends SimState {
 
 //        // set configuration
 //        usePredefinedPheromoneMap();
-        buildPheromoneMap();
+//        buildPheromoneMap();
 
         /////////////////////////////////////
         // initialize the pheromone matrix //
@@ -158,4 +162,20 @@ public class SwarmRobotSim extends SimState {
     }
 
     boolean buildPheromoneMap = false;
+
+    public double getEvaporationFactor() {
+        return evaporationFactor;
+    }
+
+    public void setEvaporationFactor(double evaporationFactor) {
+        this.evaporationFactor = evaporationFactor;
+    }
+
+    public double getSuperpositionFactor() {
+        return superpositionFactor;
+    }
+
+    public void setSuperpositionFactor(double superpositionFactor) {
+        this.superpositionFactor = superpositionFactor;
+    }
 }

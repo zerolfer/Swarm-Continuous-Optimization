@@ -9,6 +9,7 @@ import sim.portrayal.Inspector;
 import sim.portrayal.continuous.ContinuousPortrayal2D;
 import sim.portrayal.grid.ObjectGridPortrayal2D;
 import sim.portrayal.simple.CircledPortrayal2D;
+import sim.portrayal.simple.LabelledPortrayal2D;
 import sim.portrayal.simple.OvalPortrayal2D;
 import sim.portrayal.simple.RectanglePortrayal2D;
 
@@ -58,9 +59,14 @@ public class SwarmRobotsWithUI extends GUIState {
         spacePortrayal.setField(swarm.space);
         pheromonesPortrayal.setField(swarm.pheromoneGrid);
         spacePortrayal.setPortrayalForAll(
-                new CircledPortrayal2D(
-                        new OvalPortrayal2D(),
-                        0, 1.1, Color.blue, true)
+                new LabelledPortrayal2D(
+                        new CircledPortrayal2D(
+                                new OvalPortrayal2D(),
+                                0, 1.1, Color.blue, true),
+                        0, 0, -0.45, 0.07, new Font("SansSerif", Font.BOLD, 15),
+                        LabelledPortrayal2D.ALIGN_LEFT, null, Color.PINK, false)
+
+
         );
 
         pheromonesPortrayal.setPortrayalForAll(new RectanglePortrayal2D(Color.black, false)/*Double2DPortrayal2D()*/);

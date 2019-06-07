@@ -8,9 +8,7 @@ public class Robot implements Steppable {
 
     private Double2D velocity;
     private Double2D localBestPosition;
-
-    private double evaporationFactor = 0.5; // TODO: tune parameters
-    private double superpositionFactor = 1;
+    private Double2D currentPosition;
 
     Robot(Double2D position) {
         this(position, new Double2D(1, 1));
@@ -19,6 +17,7 @@ public class Robot implements Steppable {
     Robot(Double2D position, Double2D initialVelocity) {
         this.velocity = initialVelocity;
         localBestPosition = position;
+        currentPosition = position;
     }
 
     @Override
@@ -43,6 +42,7 @@ public class Robot implements Steppable {
 //        }
 
         swarm.space.setObjectLocation(this, newPosition);
+        this.currentPosition = newPosition;
         System.out.println(toString() + " at (" + newPosition.x + ", " + newPosition.y + ")");
 
 //        if(swarm.bestPosition==null||Utils.esMejor(f(swarm.bestPosition),f(newPosition))) // TODO:a implementar
@@ -57,7 +57,8 @@ public class Robot implements Steppable {
         Double2D newTrail;
         if (Math.pow(vectorAtoB.length(), 2) == 0) newTrail = vectorAtoB.multiply(0);
         else newTrail = vectorAtoB.multiply(f / Math.pow(vectorAtoB.length(), 2));
-        Double2D newPheromoneTrail = readData.multiply(1 - evaporationFactor).add(newTrail.multiply(superpositionFactor));
+        Double2D newPheromoneTrail = readData.multiply(1 - swarm.getEvaporationFactor())
+                .add(newTrail.multiply(swarm.getSuperpositionFactor()));
         writeTag(newPheromoneTrail, currentPosition, swarm); // vector addition
 
     }
@@ -114,6 +115,11 @@ public class Robot implements Steppable {
         swarm.pheromoneGrid.set((int) currentPosition.x, (int) currentPosition.y, newPheromoneTrail); // discretized
     }
 
+    @Override
+    public String toString() {
+        return String.format("(%.2f, %.2f)", currentPosition.x, currentPosition.y);
+    }
+
     public Double2D getVelocity() {
         return velocity;
     }
@@ -122,11 +128,7 @@ public class Robot implements Steppable {
         return localBestPosition;
     }
 
-    public double getEvaporationFactor() {
-        return evaporationFactor;
-    }
-
-    public double getSuperpositionFactor() {
-        return superpositionFactor;
+    public Double2D getCurrentPosition() {
+        return currentPosition;
     }
 }
