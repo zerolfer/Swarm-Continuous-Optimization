@@ -1,5 +1,6 @@
 package robots;
 
+import map.MapElements;
 import sim.display.Console;
 import sim.display.Controller;
 import sim.display.Display2D;
@@ -23,6 +24,7 @@ public class SwarmRobotsWithUI extends GUIState {
     private Display2D display;
     private JFrame displayFrame;
     private ContinuousPortrayal2D spacePortrayal = new ContinuousPortrayal2D();
+    private ObjectGridPortrayal2D mapPortrayal = new ObjectGridPortrayal2D();
     private ObjectGridPortrayal2D pheromonesPortrayal = new ObjectGridPortrayal2D();
     private ObjectGridPortrayal2D pheromonesColourPortrayal = new ObjectGridPortrayal2D();
 
@@ -72,16 +74,48 @@ public class SwarmRobotsWithUI extends GUIState {
 
         pheromonesPortrayal.setField(swarm.pheromoneGrid);
         pheromonesColourPortrayal.setField(swarm.pheromoneGrid);
+        mapPortrayal.setField(swarm.map);
         pheromonesPortrayal.setPortrayalForAll(new ArrowGridPortrayal2D(Color.black, false));
         pheromonesColourPortrayal.setPortrayalForAll(new RectanglePortrayal2D() {
             @Override
             public void draw(Object object, Graphics2D graphics, DrawInfo2D info) {
-                super.draw(object, graphics, info);
+//                super.draw(object, graphics, info);
                 Double2D endPoint = (Double2D) object;
 
 
                 int r = (int) (255 * endPoint.length() / 100f);
                 graphics.setColor(new Color(r > 255 ? 255 : r, 87, 51, 70));
+
+                graphics.fillRect((int) (info.draw.x - info.draw.width / 2.0), (int) (info.draw.y - info.draw.width / 2.0),
+                        (int) info.draw.width, (int) info.draw.height);
+
+            }
+        });
+        mapPortrayal.setPortrayalForAll(new RectanglePortrayal2D() {
+            @Override
+            public void draw(Object object, Graphics2D graphics, DrawInfo2D info) {
+                super.draw(object, graphics, info);
+                MapElements element = (MapElements) object;
+
+                Color color;
+                switch (element) {
+                    case BLACK:
+                        color = Color.BLACK;
+                        break;
+                    case WHITE:
+                        color = Color.WHITE;
+                        break;
+                    case GOAL:
+                        color = Color.GREEN;
+                        break;
+                    case START:
+                        color = Color.RED;
+                        break;
+                    default:
+                        throw new RuntimeException("Error at drawing the map");
+                }
+
+                graphics.setColor(color);
 
                 graphics.fillRect((int) (info.draw.x - info.draw.width / 2.0), (int) (info.draw.y - info.draw.width / 2.0),
                         (int) info.draw.width, (int) info.draw.height);
@@ -105,7 +139,8 @@ public class SwarmRobotsWithUI extends GUIState {
         displayFrame.setTitle(getName());
         controller.registerFrame(displayFrame);
         displayFrame.setVisible(true);
-        display.attach(pheromonesColourPortrayal, "Pheromones gradient color");
+        display.attach(mapPortrayal, "Map");
+        display.attach(pheromonesColourPortrayal, "Pheromones gradient color", false);
         display.attach(pheromonesPortrayal, "Pheromones trail vector");
         display.attach(spacePortrayal, "Robots");
     }

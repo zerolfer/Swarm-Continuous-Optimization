@@ -12,7 +12,20 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.10</maven.compiler.source>
         <maven.compiler.target>1.10</maven.compiler.target>
+
+
     </properties>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.*</include>
+                </includes>
+            </resource>
+        </resources>
+    </build>
 
     <repositories>
         <repository>
@@ -67,9 +80,9 @@
 
         <!-- https://mvnrepository.com/artifact/gnujaxp/gnujaxp -->
         <!--<dependency>-->
-            <!--<groupId>gnujaxp</groupId>-->
-            <!--<artifactId>gnujaxp</artifactId>-->
-            <!--<version>1.0.0</version>-->
+        <!--<groupId>gnujaxp</groupId>-->
+        <!--<artifactId>gnujaxp</artifactId>-->
+        <!--<version>1.0.0</version>-->
         <!--</dependency>-->
 
     </dependencies>
