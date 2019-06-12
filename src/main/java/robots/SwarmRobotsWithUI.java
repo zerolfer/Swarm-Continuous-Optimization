@@ -15,6 +15,7 @@ import sim.portrayal.simple.LabelledPortrayal2D;
 import sim.portrayal.simple.OvalPortrayal2D;
 import sim.portrayal.simple.RectanglePortrayal2D;
 import sim.util.Double2D;
+import sim.util.MutableInt2D;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,9 +30,7 @@ public class SwarmRobotsWithUI extends GUIState {
     private ObjectGridPortrayal2D pheromonesColourPortrayal = new ObjectGridPortrayal2D();
 
     public static void main(String[] args) {
-        SwarmRobotsWithUI vid = new SwarmRobotsWithUI();
-        Console c = new Console(vid);
-        c.setVisible(true);
+        new Console(new SwarmRobotsWithUI()).setVisible(true);
     }
 
     public SwarmRobotsWithUI(SimState state) {
@@ -69,26 +68,62 @@ public class SwarmRobotsWithUI extends GUIState {
                                 new OvalPortrayal2D(),
                                 0, 1.1, Color.blue, true),
                         0, 0, -0.45, 0.07, new Font("SansSerif", Font.BOLD, 15),
-                        LabelledPortrayal2D.ALIGN_LEFT, null, Color.MAGENTA, true)
+                        LabelledPortrayal2D.ALIGN_LEFT, null, Color.BLUE, true)
         );
 
         pheromonesPortrayal.setField(swarm.pheromoneGrid);
         pheromonesColourPortrayal.setField(swarm.pheromoneGrid);
         mapPortrayal.setField(swarm.map);
-        pheromonesPortrayal.setPortrayalForAll(new ArrowGridPortrayal2D(Color.black, false));
+        pheromonesPortrayal.setPortrayalForAll(new RectanglePortrayal2D(Color.BLACK, false) {
+            @Override
+            public void draw(Object object, Graphics2D graphics, DrawInfo2D info) {
+                super.draw(object, graphics, info);
+
+                Double2D endPoint = (Double2D) object;
+                graphics.setStroke(new BasicStroke(2));
+
+
+                if (!info.precise) {
+                    int x = (int) (info.draw.x);
+                    int y = (int) (info.draw.y);
+
+
+                    Color c = Color.RED;
+                    graphics.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), 127));
+
+                    //endPoint.resize()
+                    int endX = x + (int) endPoint.getX()/* *2*/;
+                    int endY = y + (int) endPoint.getY()/* *2*/;
+
+                    graphics.drawLine(x, y, endX, endY);
+
+                    graphics.setStroke(new BasicStroke(5));
+                    graphics.drawLine(endX, endY, endX, endY);
+                    graphics.setStroke(new BasicStroke(1));
+
+
+                }
+            }
+        });//ArrowGridPortrayal2D(Color.black, false));
         pheromonesColourPortrayal.setPortrayalForAll(new RectanglePortrayal2D() {
             @Override
             public void draw(Object object, Graphics2D graphics, DrawInfo2D info) {
 //                super.draw(object, graphics, info);
                 Double2D endPoint = (Double2D) object;
 
+                MutableInt2D location = (MutableInt2D) info.location;
+                if (swarm.map.get(location.x, location.y) == MapElements.BLACK)
+                    graphics.setColor(Color.BLACK);
+                else {
+                    int r = (int) (endPoint.length() * 5);
+                    if (endPoint.length() <= 0)
+                        if (r < 0) r = 0;
+                    if (r > 255) r = 255;
+                    graphics.setColor(new Color(255, r + 160 > 255 ? 255 : r + 160, r));
 
-                int r = (int) (255 * endPoint.length() / 100f);
-                graphics.setColor(new Color(r > 255 ? 255 : r, 87, 51, 70));
-
-                graphics.fillRect((int) (info.draw.x - info.draw.width / 2.0), (int) (info.draw.y - info.draw.width / 2.0),
-                        (int) info.draw.width, (int) info.draw.height);
-
+                    graphics.fillRect((int) (info.draw.x - info.draw.width / 2.0), (int) (info.draw.y - info.draw.width / 2.0),
+                            (int) info.draw.width, (int) info.draw.height);
+                }
             }
         });
         mapPortrayal.setPortrayalForAll(new RectanglePortrayal2D() {

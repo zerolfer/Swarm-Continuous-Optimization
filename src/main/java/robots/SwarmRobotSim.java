@@ -3,6 +3,7 @@ package robots;
 import functions.TestFunction;
 import functions.TestFuntion2;
 import map.MapCreator;
+import map.MapElements;
 import sim.engine.SimState;
 import sim.field.continuous.Continuous2D;
 import sim.field.grid.ObjectGrid2D;
@@ -14,7 +15,7 @@ public class SwarmRobotSim extends SimState {
     boolean exploreMode = true; // TODO
     //
     private int numRobots = 50;
-//    private int xy_max = 20; // max value that x and y can take
+    //    private int xy_max = 20; // max value that x and y can take
     private int precisionFactor = 20; // size of each cell, (1 = 1x1, 2= 0.5x0.5, 3=0.25x0.25)
 
     Continuous2D space;// = new Continuous2D(precisionFactor, xy_max, xy_max);
@@ -30,10 +31,11 @@ public class SwarmRobotSim extends SimState {
     private double superpositionFactor = .5;
 
 
-    private double maxVelocity = 2;
+    private double maxVelocity = 1;
 
     private Double2D bestPosition;
     private double bestFitness;
+    private String imageName = "simple1.png";
 
     @SuppressWarnings("WeakerAccess")
     public SwarmRobotSim(long seed) {
@@ -70,7 +72,7 @@ public class SwarmRobotSim extends SimState {
 //        usePredefinedPheromoneMap();
 //        buildPheromoneMap();
 
-        Bag bag = MapCreator.createMap("simple1.png", precisionFactor);
+        Bag bag = MapCreator.createMap(imageName, precisionFactor);
         map = (ObjectGrid2D) bag.get(0);
         function = (TestFunction) bag.get(1);
         //start=(Int2D) bag.get(2);
@@ -98,7 +100,10 @@ public class SwarmRobotSim extends SimState {
         //////////////////////////////////////
         for (int i = 0; i < numRobots; i++) {
 //            Int2D pos = new Int2D(random.nextInt(space.getWidth()), random.nextInt(space.getHeight()));
-            Double2D pos = new Double2D(random.nextDouble() * space.getWidth(), random.nextDouble() * space.getHeight());
+            Double2D pos;
+            do {
+                pos = new Double2D(random.nextDouble() * space.getWidth(), random.nextDouble() * space.getHeight());
+            } while (map.get((int) pos.x, (int) pos.y) == MapElements.BLACK); // que no cominece en una posición prohibida
 
             // initial velocity:
             double vel_x = random.nextDouble() * maxVelocity, vel_y = random.nextDouble() * maxVelocity;
@@ -210,5 +215,20 @@ public class SwarmRobotSim extends SimState {
         this.superpositionFactor = superpositionFactor;
     }
 
+    public void setPrecisionFactor(int precisionFactor) {
+        this.precisionFactor = precisionFactor;
+    }
+
+    public String getImageName() {
+        return imageName;
+    }
+
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
+    }
+
+    public void domImageName(String imageName) {
+        this.imageName = imageName;
+    }
 
 }

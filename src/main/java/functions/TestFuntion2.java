@@ -32,6 +32,6 @@ public class TestFuntion2 implements TestFunction {
 
     @Override
     public String toString() {
-        return "f(x,y) = -(x-"+goal.x+")^2 - (y-+"+goal.x+")^2 + 128";
+        return "f(x,y) = -(x-"+goal.x+")^2 - (y-"+goal.y+")^2 + 128";
     }
 }
