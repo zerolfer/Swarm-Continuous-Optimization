@@ -10,7 +10,11 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+
+//import java.awt;
 
 
 public class MapCreator {
@@ -65,7 +69,7 @@ public class MapCreator {
 
     private static Bag buildMap(MapElements[][] imgMap, int cellSize) {
         ObjectGrid2D grid = new ObjectGrid2D(imgMap.length / cellSize, imgMap[0].length / cellSize);
-        TestFunction function = null;
+        List<TestFunction> functions = new ArrayList<>();
         Int2D start = null;
         int xCount = 0, yCount = 0;
         int x = 0, y = 0;
@@ -75,7 +79,7 @@ public class MapCreator {
 
                 // if it is not empty, save the data and finish the iteration
                 if (imgMap[i][j].equals(MapElements.GOAL)) {
-                    function = new TestFuntion2(x, y);
+                    functions.add(new TestFuntion2(x, y));
                     if (grid.get(x, y) == null) grid.set(x, y, MapElements.WHITE); // only if not assigned yet
                 } else if (imgMap[i][j].equals(MapElements.START)) {
                     start = new Int2D(x, y);
@@ -104,7 +108,7 @@ public class MapCreator {
         }
         Bag res = new Bag();
         res.add(grid);
-        res.add(function);
+        res.add(functions);
         res.add(start);
         return res;
     }

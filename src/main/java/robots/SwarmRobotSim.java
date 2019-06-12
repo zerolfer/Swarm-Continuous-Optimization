@@ -1,14 +1,16 @@
 package robots;
 
 import functions.TestFunction;
-import functions.TestFuntion2;
 import map.MapCreator;
 import map.MapElements;
 import sim.engine.SimState;
+import sim.engine.Steppable;
 import sim.field.continuous.Continuous2D;
 import sim.field.grid.ObjectGrid2D;
 import sim.util.Bag;
 import sim.util.Double2D;
+
+import java.util.List;
 
 public class SwarmRobotSim extends SimState {
 
@@ -22,7 +24,7 @@ public class SwarmRobotSim extends SimState {
     ObjectGrid2D map;
     ObjectGrid2D pheromoneGrid; // = new ObjectGrid2D(precisionFactor * xy_max, precisionFactor * xy_max);
 
-    TestFunction function = new TestFuntion2(8, 8);
+    List<TestFunction> functions;
 
     private double inertiaWeight = .5;
     private double selfLearningFactor = .5;
@@ -43,7 +45,7 @@ public class SwarmRobotSim extends SimState {
     }
 
     public static void main(String[] args) {
-        doLoop(SwarmRobotSim.class, new String[]{"-time", "1000000", "-until", "50000000"});
+        doLoop(SwarmRobotSim.class, new String[]{"-time", "1000000", "-until", "50000000", "-for", "20"});
         System.exit(0);
     }
 
@@ -63,6 +65,7 @@ public class SwarmRobotSim extends SimState {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void start() {
         super.start();
         if (space != null) space.clear();
@@ -74,10 +77,12 @@ public class SwarmRobotSim extends SimState {
 
         Bag bag = MapCreator.createMap(imageName, precisionFactor);
         map = (ObjectGrid2D) bag.get(0);
-        function = (TestFunction) bag.get(1);
+        functions = (List<TestFunction>) bag.get(1);
         //start=(Int2D) bag.get(2);
         space = new Continuous2D(precisionFactor, map.getWidth(), map.getHeight());
         pheromoneGrid = new ObjectGrid2D(map.getWidth(), map.getHeight());
+
+        function = functions.get(0);
 
         /////////////////////////////////////
         // initialize the pheromone matrix //
@@ -87,7 +92,7 @@ public class SwarmRobotSim extends SimState {
                 Double2D vector = new Double2D(0, 0);
 
                 if (buildPheromoneMap)
-                    vector = function.gradient(i, j); // GRADIENT INICIALIZATION
+                    vector = functions.get(0).gradient(i, j); // GRADIENT INICIALIZATION
 
                 if (vector.length() > maxVelocity) vector.resize(maxVelocity);
 
@@ -116,7 +121,19 @@ public class SwarmRobotSim extends SimState {
             schedule.scheduleRepeating(bot);
         }
 
+        problemSolverAlgorithm();
 
+
+    }
+
+    TestFunction function;
+
+    private void problemSolverAlgorithm() {
+//        final int NUM_EXPLORING_ITERATIONS = 20;
+//        for (int i = 0; i < NUM_EXPLORING_ITERATIONS; i++) {
+//            for (Object bot : space.getAllObjects())
+//                schedule.scheduleRepeating((Steppable) bot);
+//        }
     }
 
 

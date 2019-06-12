@@ -182,8 +182,7 @@ public class Robot implements Steppable {
     }
 
     private Double2D readTag(SwarmRobotSim st, Double2D currentPosition) throws IllegalStateException {
-        Double2D position = currentPosition.multiply(st.getPrecisionFactor());
-        return (Double2D) st.pheromoneGrid.get((int) position.x, (int) position.y); // discretized
+        return (Double2D) st.pheromoneGrid.get((int) currentPosition.x, (int) currentPosition.y); // discretized
     }
 
     private void writeTag(Double2D newPheromoneTrail, Double2D currentPosition, SwarmRobotSim swarm) {
