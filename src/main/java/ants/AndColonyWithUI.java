@@ -1,4 +1,4 @@
-package robots;
+package ants;
 
 import map.MapElements;
 import sim.display.Console;
@@ -8,8 +8,8 @@ import sim.display.GUIState;
 import sim.engine.SimState;
 import sim.portrayal.DrawInfo2D;
 import sim.portrayal.Inspector;
-import sim.portrayal.continuous.ContinuousPortrayal2D;
 import sim.portrayal.grid.ObjectGridPortrayal2D;
+import sim.portrayal.grid.SparseGridPortrayal2D;
 import sim.portrayal.simple.CircledPortrayal2D;
 import sim.portrayal.simple.LabelledPortrayal2D;
 import sim.portrayal.simple.OvalPortrayal2D;
@@ -20,26 +20,26 @@ import sim.util.MutableInt2D;
 import javax.swing.*;
 import java.awt.*;
 
-public class SwarmRobotsWithUI extends GUIState {
+public class AndColonyWithUI extends GUIState {
 
     private Display2D display;
     private JFrame displayFrame;
-    private ContinuousPortrayal2D spacePortrayal = new ContinuousPortrayal2D();
+    private SparseGridPortrayal2D spacePortrayal = new SparseGridPortrayal2D();
     private ObjectGridPortrayal2D mapPortrayal = new ObjectGridPortrayal2D();
     private ObjectGridPortrayal2D pheromonesPortrayal = new ObjectGridPortrayal2D();
     private ObjectGridPortrayal2D pheromonesColourPortrayal = new ObjectGridPortrayal2D();
 
     public static void main(String[] args) {
-        new Console(new SwarmRobotsWithUI()).setVisible(true);
+        new Console(new AndColonyWithUI()).setVisible(true);
     }
 
-    public SwarmRobotsWithUI(SimState state) {
+    public AndColonyWithUI(SimState state) {
         super(state);
     }
 
     @SuppressWarnings("WeakerAccess")
-    public SwarmRobotsWithUI() {
-        super(new SwarmRobotSim(System.currentTimeMillis()));
+    public AndColonyWithUI() {
+        super(new AntColonySim(System.currentTimeMillis()));
     }
 
     public static String getName() {
@@ -59,7 +59,7 @@ public class SwarmRobotsWithUI extends GUIState {
     }
 
     private void setupPortrayals() {
-        SwarmRobotSim swarm = (SwarmRobotSim) state;
+        AntColonySim swarm = (AntColonySim) state;
 
         spacePortrayal.setField(swarm.space);
         spacePortrayal.setPortrayalForAll(
@@ -79,9 +79,7 @@ public class SwarmRobotsWithUI extends GUIState {
             public void draw(Object object, Graphics2D graphics, DrawInfo2D info) {
                 super.draw(object, graphics, info);
 
-                Double2D endPoint = (Double2D) object;
-                graphics.setStroke(new BasicStroke(2));
-
+                Double intensity = (Double) object;
 
                 if (!info.precise) {
                     int x = (int) (info.draw.x);
@@ -89,43 +87,35 @@ public class SwarmRobotsWithUI extends GUIState {
 
 
                     Color c = Color.RED;
-                    graphics.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), 127));
-
-                    //endPoint.resize()
-                    int endX = x + (int) endPoint.getX()/* *2*/;
-                    int endY = y + (int) endPoint.getY()/* *2*/;
-
-                    graphics.drawLine(x, y, endX, endY);
-
-                    graphics.setStroke(new BasicStroke(5));
-                    graphics.drawLine(endX, endY, endX, endY);
-                    graphics.setStroke(new BasicStroke(1));
+                    graphics.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), (int) (255 * intensity)));
+                    graphics.fillRect((int) (info.draw.x - info.draw.width / 2.0), (int) (info.draw.y - info.draw.width / 2.0),
+                            (int) info.draw.width, (int) info.draw.height);
 
 
                 }
             }
         });//ArrowGridPortrayal2D(Color.black, false));
-        pheromonesColourPortrayal.setPortrayalForAll(new RectanglePortrayal2D() {
-            @Override
-            public void draw(Object object, Graphics2D graphics, DrawInfo2D info) {
+//        pheromonesColourPortrayal.setPortrayalForAll(new RectanglePortrayal2D() {
+//            @Override
+//            public void draw(Object object, Graphics2D graphics, DrawInfo2D info) {
 //                super.draw(object, graphics, info);
-                Double2D endPoint = (Double2D) object;
-
-                MutableInt2D location = (MutableInt2D) info.location;
-                if (swarm.map.get(location.x, location.y) == MapElements.BLACK)
-                    graphics.setColor(Color.BLACK);
-                else {
-                    int r = (int) (endPoint.length() * 5);
-                    if (endPoint.length() <= 0)
-                        if (r < 0) r = 0;
-                    if (r > 255) r = 255;
-                    graphics.setColor(new Color(255, r + 160 > 255 ? 255 : r + 160, r));
-
-                    graphics.fillRect((int) (info.draw.x - info.draw.width / 2.0), (int) (info.draw.y - info.draw.width / 2.0),
-                            (int) info.draw.width, (int) info.draw.height);
-                }
-            }
-        });
+//                Double2D endPoint = (Double2D) object;
+//
+//                MutableInt2D location = (MutableInt2D) info.location;
+//                if (swarm.map.get(location.x, location.y) == MapElements.BLACK)
+//                    graphics.setColor(Color.BLACK);
+//                else {
+//                    int r = (int) (endPoint.length() * 5);
+//                    if (endPoint.length() <= 0)
+//                        if (r < 0) r = 0;
+//                    if (r > 255) r = 255;
+//                    graphics.setColor(new Color(255, r + 160 > 255 ? 255 : r + 160, r));
+//
+//                    graphics.fillRect((int) (info.draw.x - info.draw.width / 2.0), (int) (info.draw.y - info.draw.width / 2.0),
+//                            (int) info.draw.width, (int) info.draw.height);
+//                }
+//            }
+//        });
         mapPortrayal.setPortrayalForAll(new RectanglePortrayal2D() {
             @Override
             public void draw(Object object, Graphics2D graphics, DrawInfo2D info) {

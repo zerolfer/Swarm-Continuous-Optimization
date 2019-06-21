@@ -5,19 +5,23 @@ import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.util.Double2D;
 
-import static java.lang.Math.min;
+import static java.lang.Math.abs;
+import static java.lang.Math.toRadians;
 
 public class Robot implements Steppable {
 
     private Double2D velocity;
     private Double2D localBestPosition;
     private Double2D currentPosition;
+    private int degrees = 10;
+    private int MAX_ROT_ITER = 18;
+    private boolean obstaculo = false;
 
-    Robot(Double2D position) {
+    public Robot(Double2D position) {
         this(position, new Double2D(1, 1));
     }
 
-    Robot(Double2D position, Double2D initialVelocity) {
+    public Robot(Double2D position, Double2D initialVelocity) {
         this.velocity = initialVelocity;
         localBestPosition = position;
         currentPosition = position;
@@ -37,17 +41,27 @@ public class Robot implements Steppable {
 
         Double2D currentPosition = swarm.space.getObjectLocation(this);
 
-//        double initialSocialLearningFactor = 0;
-//        double initialSelfLearningFactor = 0;
-//        double initialInertia = 0;
+        double initialSocialLearningFactor = 0;
+        double initialSelfLearningFactor = 0;
+        double initialInertia = 0;
+
+        if (swarm.exploreMode) {
+            initialInertia = swarm.getInertiaWeight();
+            swarm.setInertiaWeight(1);
+
+            initialSocialLearningFactor = swarm.getSocialLearningFactor();
+            swarm.setSocialLearningFactor(1);
+
+            initialSelfLearningFactor = swarm.getSelfLearningFactor();
+//            swarm.setSelfLearningFactor(0);
+        } else {
+            initialSelfLearningFactor = swarm.getSelfLearningFactor();
+            swarm.setSelfLearningFactor(0);
+        }
+//        double initialInertia = swarm.getInertiaWeight();
 //        if (swarm.exploreMode) {
-//            initialInertia = swarm.getInertiaWeight();
 //            swarm.setInertiaWeight(1);
-//
-//            initialSocialLearningFactor = swarm.getSocialLearningFactor();
 //            swarm.setSocialLearningFactor(0);
-//
-//            initialSelfLearningFactor = swarm.getSelfLearningFactor();
 //            swarm.setSelfLearningFactor(0);
 //        }
         Double2D[] raw = readPheromones(swarm, currentPosition);
@@ -55,12 +69,25 @@ public class Robot implements Steppable {
         Double2D newPosition = raw[1];
 
         if (swarm.exploreMode) {
-            double initialInertia = swarm.getInertiaWeight();
-            swarm.setInertiaWeight(initialInertia * 3);
 
             double pos_x, pos_y;
-            do {
-                Double2D vel = generateRandomVelocity(swarm);
+
+            // avoidance strategy
+            int iteration = 1;
+            Double2D vel = generateRandomVelocity(swarm);
+            pos_x = vel.x + currentPosition.x;
+            pos_y = vel.y + currentPosition.y;
+
+            if (pos_y >= swarm.pheromoneGrid.getHeight()) pos_y = swarm.pheromoneGrid.getHeight() - 1;
+            if (pos_x >= swarm.pheromoneGrid.getWidth()) pos_x = swarm.pheromoneGrid.getWidth() - 1;
+            if (pos_y < 0) pos_y = 0;
+            if (pos_x < 0) pos_x = 0;
+
+
+            while (swarm.map.get((int) pos_x, (int) pos_y) == MapElements.BLACK && iteration < MAX_ROT_ITER) {
+                vel = rotateVelocityDegrees(degrees * iteration, swarm);
+
+                this.obstaculo = true;
 
                 pos_x = vel.x + currentPosition.x;
                 pos_y = vel.y + currentPosition.y;
@@ -69,13 +96,20 @@ public class Robot implements Steppable {
                 if (pos_x >= swarm.pheromoneGrid.getWidth()) pos_x = swarm.pheromoneGrid.getWidth() - 1;
                 if (pos_y < 0) pos_y = 0;
                 if (pos_x < 0) pos_x = 0;
-            } while (swarm.map.get((int) pos_x, (int) pos_y) == MapElements.BLACK);
+                iteration++;
+
+                if (iteration >= MAX_ROT_ITER) {
+                    pos_x = currentPosition.x;
+                    pos_y = currentPosition.y;
+                }
+            }
+
             newPosition = new Double2D(pos_x, pos_y);
 
             swarm.setInertiaWeight(initialInertia);
         }
 
-        if (!swarm.buildPheromoneMap)
+        if (!swarm.buildPheromoneMap && swarm.exploreMode)
             writePheromones(currentPosition, newPosition, socialData, swarm);
 
 //        if (swarm.exploreMode) {
@@ -88,15 +122,20 @@ public class Robot implements Steppable {
         swarm.space.setObjectLocation(this, newPosition);
         this.currentPosition = newPosition;
 
-//        if (swarm.exploreMode) {
-//            swarm.setSocialLearningFactor(initialSocialLearningFactor);
-//            swarm.setSelfLearningFactor(initialSelfLearningFactor);
-//            swarm.setInertiaWeight(initialInertia);
-//        }
+        if (swarm.exploreMode) {
+            swarm.setSocialLearningFactor(initialSocialLearningFactor);
+            swarm.setInertiaWeight(initialInertia);
+        }
+        swarm.setSelfLearningFactor(initialSelfLearningFactor);
 
 //        System.out.println(getClass().getName() + "@" + Integer.toHexString(hashCode()) + "  at " + toString());
 
 //        if(swarm.bestPosition==null||Utils.esMejor(f(swarm.bestPosition),f(newPosition))) // TODO:a implementar
+    }
+
+    private Double2D rotateVelocityDegrees(int degrees, SwarmRobotSim swarm) {
+        if (swarm.random.nextBoolean()) degrees *= -1; // left or right, randomly
+        return velocity.rotate(toRadians(degrees));
     }
 
     private void writePheromones(Double2D currentPosition, Double2D newPosition, Double2D readData, SwarmRobotSim
@@ -118,6 +157,11 @@ public class Robot implements Steppable {
 //        f = f > 0 ? min(f, 2) : min(f, 2);
         Double2D vectorAtoB = newPosition.subtract(currentPosition);
         Double2D newTrail;
+        // if the bot found an obtacle, compute the directon to get out, else, use the signal (f) direction
+        if (obstaculo) {
+            f = abs(f);
+            obstaculo = false;
+        }
         if (Math.pow(vectorAtoB.length(), 2) == 0) newTrail = vectorAtoB.multiply(0);
         else newTrail = vectorAtoB.multiply(f / Math.pow(vectorAtoB.length(), 2));
         Double2D newPheromoneTrail = readData.multiply(1 - swarm.getEvaporationFactor())
@@ -134,9 +178,16 @@ public class Robot implements Steppable {
 
             Double2D newPosition = setNewVelocityAndCalculateNewPosition(st, socialData);
 
-            while (st.map.get((int) newPosition.x, (int) newPosition.y) == MapElements.BLACK) {
-                velocity = generateRandomVelocity(st);
+            int iter = 0;
+            while (st.map.get((int) newPosition.x, (int) newPosition.y) == MapElements.BLACK && iter++ < MAX_ROT_ITER) {
+
+                velocity = rotateVelocityDegrees(degrees, st);
                 newPosition = setNewVelocityAndCalculateNewPosition(st, socialData);
+
+                obstaculo = true;
+
+                if (iter >= MAX_ROT_ITER) return new Double2D[]{socialData, currentPosition};
+
             }
 
             return new Double2D[]{socialData, newPosition};
@@ -198,11 +249,23 @@ public class Robot implements Steppable {
         return velocity;
     }
 
+    public void setVelocity(Double2D velocity) {
+        this.velocity = velocity;
+    }
+
     public Double2D getLocalBestPosition() {
         return localBestPosition;
     }
 
+    public void setLocalBestPosition(Double2D localBestPosition) {
+        this.velocity = localBestPosition;
+    }
+
     public Double2D getCurrentPosition() {
         return currentPosition;
+    }
+
+    public void setCurrentPosition(Double2D currentPosition) {
+        this.currentPosition = currentPosition;
     }
 }

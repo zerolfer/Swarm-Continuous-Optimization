@@ -22,7 +22,7 @@ public class TestFuntion2 implements TestFunction {
 
     @Override
     public double fitness(double x, double y) {
-        return -Math.pow(x - goal.x, 2) - Math.pow(y - goal.y, 2)/* + 128*/;
+        return -Math.pow(x - goal.x, 2) - Math.pow(y - goal.y, 2) + 700;
     }
 
     @Override

@@ -1,26 +1,28 @@
-package robots;
+package ants;
 
 import functions.TestFunction;
 import map.MapCreator;
 import map.MapElements;
 import sim.engine.SimState;
-import sim.engine.Steppable;
-import sim.field.continuous.Continuous2D;
+import sim.field.grid.DoubleGrid2D;
 import sim.field.grid.ObjectGrid2D;
+import sim.field.grid.SparseGrid2D;
 import sim.util.Bag;
-import sim.util.Double2D;
+import sim.util.Int2D;
 
 import java.util.List;
 
-public class SwarmRobotSim extends SimState {
+public class AntColonySim extends SimState {
 
+    public double alpha = 1;
+    public double beta = 1;
     boolean exploreMode = true;
     //
     private int numRobots = 50;
 
     private int precisionFactor = 20; // size of each cell, (1 = 1x1, 2= 0.5x0.5, 3=0.25x0.25)
 
-    Continuous2D space;// = new Continuous2D(precisionFactor, xy_max, xy_max);
+    SparseGrid2D space;// = new Continuous2D(precisionFactor, xy_max, xy_max);
     ObjectGrid2D map;
     ObjectGrid2D pheromoneGrid; // = new ObjectGrid2D(precisionFactor * xy_max, precisionFactor * xy_max);
 
@@ -29,23 +31,25 @@ public class SwarmRobotSim extends SimState {
     private double inertiaWeight = .5;
     private double selfLearningFactor = .5;
     private double socialLearningFactor = .5;
-    private double evaporationFactor = .5;
+    private double evaporationFactor = .1;
     private double superpositionFactor = .5;
 
 
     private double maxVelocity = 1;
 
-    private Double2D bestPosition;
+    private Int2D bestPosition;
     private double bestFitness;
     private String imageName = "simple1.png";
 
+    private double tau_0 = 1/numRobots;
+
     @SuppressWarnings("WeakerAccess")
-    public SwarmRobotSim(long seed) {
+    public AntColonySim(long seed) {
         super(seed);
     }
 
     public static void main(String[] args) {
-        doLoop(SwarmRobotSim.class, new String[]{"-time", "1000000", "-until", "50000000", "-for", "20"});
+        doLoop(AntColonySim.class, new String[]{"-time", "1000000", "-until", "50000000", "-for", "20"});
         System.exit(0);
     }
 
@@ -71,50 +75,34 @@ public class SwarmRobotSim extends SimState {
         if (space != null) space.clear();
         this.bestPosition = null;
         this.bestFitness = 0;
-//        // set configuration
-//        usePredefinedPheromoneMap();
-//        buildPheromoneMap();
 
         Bag bag = MapCreator.createMap(imageName, precisionFactor);
         map = (ObjectGrid2D) bag.get(0);
         functions = (List<TestFunction>) bag.get(1);
         //start=(Int2D) bag.get(2);
-        space = new Continuous2D(precisionFactor, map.getWidth(), map.getHeight());
-        pheromoneGrid = new ObjectGrid2D(map.getWidth(), map.getHeight());
+        space = new SparseGrid2D(map.getWidth(), map.getHeight());
+        pheromoneGrid = new ObjectGrid2D(map.getWidth(), map.getHeight(), tau_0);
 
         function = functions.get(0);
 
-        /////////////////////////////////////
-        // initialize the pheromone matrix //
-        /////////////////////////////////////
-        for (int i = 0; i < pheromoneGrid.getWidth(); i++) {
-            for (int j = 0; j < pheromoneGrid.getHeight(); j++) {
-                Double2D vector = new Double2D(0, 0);
-
-                if (buildPheromoneMap)
-                    vector = functions.get(0).gradient(i, j); // GRADIENT INICIALIZATION
-
-                if (vector.length() > maxVelocity) vector.resize(maxVelocity);
-
-                pheromoneGrid.set(i, j, vector);
-            }
-        }
+//        /////////////////////////////////////
+//        // initialize the pheromone matrix //
+//        /////////////////////////////////////
+//        for (int i = 0; i < pheromoneGrid.getWidth(); i++)
+//            for (int j = 0; j < pheromoneGrid.getHeight(); j++)
+//                pheromoneGrid.set(i, j, tau_0);
 
         //////////////////////////////////////
         // initialize and locate the robots //
         //////////////////////////////////////
         for (int i = 0; i < numRobots; i++) {
 //            Int2D pos = new Int2D(random.nextInt(space.getWidth()), random.nextInt(space.getHeight()));
-            Double2D pos;
+            Int2D pos;
             do {
-                pos = new Double2D(random.nextDouble() * space.getWidth(), random.nextDouble() * space.getHeight());
-            } while (map.get((int) pos.x, (int) pos.y) == MapElements.BLACK); // que no cominece en una posición prohibida
+                pos = new Int2D(random.nextInt(space.getWidth()), random.nextInt(space.getHeight()));
+            } while (map.get(pos.x, pos.y) == MapElements.BLACK); // que no cominece en una posición prohibida
 
-            // initial velocity:
-            double vel_x = random.nextDouble() * maxVelocity, vel_y = random.nextDouble() * maxVelocity;
-            if (random.nextBoolean()) vel_x *= -1;
-            if (random.nextBoolean()) vel_y *= -1;
-            Robot bot = new Robot(pos, new Double2D(vel_x, vel_y));
+            Ant bot = new Ant(pos);
 
             space.setObjectLocation(bot, pos);
 
@@ -189,12 +177,12 @@ public class SwarmRobotSim extends SimState {
         return function;
     }
 
-    public Double2D getBestPosition() {
+    public Int2D getBestPosition() {
         return bestPosition;
     }
 
 
-    void setBestPosition(Double2D bestPosition) {
+    void setBestPosition(Int2D bestPosition) {
         this.bestPosition = bestPosition;
     }
 
@@ -248,4 +236,7 @@ public class SwarmRobotSim extends SimState {
         this.imageName = imageName;
     }
 
+    public double getTau_0() {
+        return tau_0;
+    }
 }
