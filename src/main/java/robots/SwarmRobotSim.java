@@ -4,7 +4,6 @@ import functions.TestFunction;
 import map.MapCreator;
 import map.MapElements;
 import sim.engine.SimState;
-import sim.engine.Steppable;
 import sim.field.continuous.Continuous2D;
 import sim.field.grid.ObjectGrid2D;
 import sim.util.Bag;
@@ -15,7 +14,8 @@ import java.util.List;
 public class SwarmRobotSim extends SimState {
 
     boolean exploreMode = true;
-    //
+    int numExploringIter = 20;
+
     private int numRobots = 50;
 
     private int precisionFactor = 20; // size of each cell, (1 = 1x1, 2= 0.5x0.5, 3=0.25x0.25)
@@ -211,7 +211,9 @@ public class SwarmRobotSim extends SimState {
     }
 
     public void setExploreMode(boolean exploreMode) {
-        this.exploreMode = exploreMode;
+        for (Object r: this.space.getAllObjects()) {
+            ((Robot) r).exploreMode=exploreMode;
+        }
     }
 
     boolean buildPheromoneMap = false;
@@ -248,4 +250,11 @@ public class SwarmRobotSim extends SimState {
         this.imageName = imageName;
     }
 
+    public int getNumExploringIter() {
+        return numExploringIter;
+    }
+
+    public void setNumExploringIter(int numExploringIter) {
+        this.numExploringIter = numExploringIter;
+    }
 }

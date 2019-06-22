@@ -27,7 +27,7 @@ public class Ant implements Steppable {
         this(position, new Int2D(1, 1));
     }
 
-    Ant(Int2D position, Int2D initialVelocity) {
+    public Ant(Int2D position, Int2D initialVelocity) {
         this.velocity = initialVelocity;
         localBestPosition = position;
         currentPosition = position;

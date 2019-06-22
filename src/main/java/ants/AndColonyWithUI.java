@@ -43,7 +43,7 @@ public class AndColonyWithUI extends GUIState {
     }
 
     public static String getName() {
-        return "Swarm Ant Optimization";
+        return "Swarm Firefly Optimization";
     }
 
     @Override

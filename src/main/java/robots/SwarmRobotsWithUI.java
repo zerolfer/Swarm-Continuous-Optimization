@@ -29,10 +29,6 @@ public class SwarmRobotsWithUI extends GUIState {
     private ObjectGridPortrayal2D pheromonesPortrayal = new ObjectGridPortrayal2D();
     private ObjectGridPortrayal2D pheromonesColourPortrayal = new ObjectGridPortrayal2D();
 
-    public static void main(String[] args) {
-        new Console(new SwarmRobotsWithUI()).setVisible(true);
-    }
-
     public SwarmRobotsWithUI(SimState state) {
         super(state);
     }
@@ -42,8 +38,12 @@ public class SwarmRobotsWithUI extends GUIState {
         super(new SwarmRobotSim(System.currentTimeMillis()));
     }
 
+    public static void main(String[] args) {
+        new Console(new SwarmRobotsWithUI()).setVisible(true);
+    }
+
     public static String getName() {
-        return "Swarm Ant Optimization";
+        return "Swarm Firefly Optimization";
     }
 
     @Override
@@ -65,7 +65,17 @@ public class SwarmRobotsWithUI extends GUIState {
         spacePortrayal.setPortrayalForAll(
                 new LabelledPortrayal2D(
                         new CircledPortrayal2D(
-                                new OvalPortrayal2D(),
+                                new OvalPortrayal2D() {
+                                    @Override
+                                    public void draw(Object object, Graphics2D graphics, DrawInfo2D info) {
+                                        Robot bot = (Robot) object;
+
+                                        if (bot.isExploreMode()) graphics.setColor(Color.LIGHT_GRAY);
+                                        else graphics.setColor(Color.DARK_GRAY);
+
+                                        super.draw(object, graphics, info);
+                                    }
+                                },
                                 0, 1.1, Color.blue, true),
                         0, 0, -0.45, 0.07, new Font("SansSerif", Font.BOLD, 15),
                         LabelledPortrayal2D.ALIGN_LEFT, null, Color.BLUE, true)
@@ -121,7 +131,8 @@ public class SwarmRobotsWithUI extends GUIState {
                     if (r > 255) r = 255;
                     graphics.setColor(new Color(255, r + 160 > 255 ? 255 : r + 160, r));
 
-                    graphics.fillRect((int) (info.draw.x - info.draw.width / 2.0), (int) (info.draw.y - info.draw.width / 2.0),
+                    graphics.fillRect((int) (info.draw.x - info.draw.width / 2.0),
+                            (int) (info.draw.y - info.draw.width / 2.0),
                             (int) info.draw.width, (int) info.draw.height);
                 }
             }
@@ -152,7 +163,8 @@ public class SwarmRobotsWithUI extends GUIState {
 
                 graphics.setColor(color);
 
-                graphics.fillRect((int) (info.draw.x - info.draw.width / 2.0), (int) (info.draw.y - info.draw.width / 2.0),
+                graphics.fillRect((int) (info.draw.x - info.draw.width / 2.0),
+                        (int) (info.draw.y - info.draw.width / 2.0),
                         (int) info.draw.width, (int) info.draw.height);
 
             }

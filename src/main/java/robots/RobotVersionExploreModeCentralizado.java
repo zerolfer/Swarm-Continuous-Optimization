@@ -8,41 +8,26 @@ import sim.util.Double2D;
 import static java.lang.Math.abs;
 import static java.lang.Math.toRadians;
 
-public class Robot implements Steppable {
+public class RobotVersionExploreModeCentralizado implements Steppable {
 
-    protected static int MAX_NUM_ITER_NO_IMPROVEMENT = 5;
-    static int MAX_ROT_ITER = 18;
-    protected int numIter = 0;
-    protected int numIterNoImprovement = 0;
-    protected Double2D currentPosition;
-    int degrees = 10;
-    boolean obstaculo = false;
-    boolean exploreMode = true;
-    RobotExploreMode exploreRobot;
-    RobotNoExploreMode noExploreRobot;
     private Double2D velocity;
     private Double2D localBestPosition;
+    private Double2D currentPosition;
+    int degrees = 10;
+    int MAX_ROT_ITER = 18;
+    boolean obstaculo = false;
 
-    public Robot(Double2D position) {
+    public RobotVersionExploreModeCentralizado(Double2D position) {
         this(position, new Double2D(1, 1));
     }
 
-    public Robot(Double2D position, Double2D initialVelocity) {
+    public RobotVersionExploreModeCentralizado(Double2D position, Double2D initialVelocity) {
         this.velocity = initialVelocity;
         localBestPosition = position;
         currentPosition = position;
-
-        exploreRobot = new RobotExploreMode(this);
-        noExploreRobot = new RobotNoExploreMode(this);
     }
 
-    Robot(Robot r) {
-        this.velocity = r.velocity;
-        localBestPosition = r.localBestPosition;
-        currentPosition = r.currentPosition;
-    }
-
-    Double2D generateRandomVelocity(SwarmRobotSim swarm) {
+    private Double2D generateRandomVelocity(SwarmRobotSim swarm) {
         double vel_x = swarm.random.nextDouble() * swarm.getMaxVelocity(),
                 vel_y = swarm.random.nextDouble() * swarm.getMaxVelocity();
         if (swarm.random.nextBoolean()) vel_x *= -1;
@@ -54,21 +39,98 @@ public class Robot implements Steppable {
     public void step(SimState state) {
         SwarmRobotSim swarm = (SwarmRobotSim) state;
 
-        this.exploreMode = numIterNoImprovement > MAX_NUM_ITER_NO_IMPROVEMENT;
+        Double2D currentPosition = swarm.space.getObjectLocation(this);
 
-        if (numIter <= swarm.numExploringIter) {
-            this.exploreMode = true;
-            numIter++;
+        double initialSocialLearningFactor = 0;
+        double initialSelfLearningFactor = 0;
+        double initialInertia = 0;
+
+        if (swarm.exploreMode) {
+            initialInertia = swarm.getInertiaWeight();
+            swarm.setInertiaWeight(1);
+
+            initialSocialLearningFactor = swarm.getSocialLearningFactor();
+            swarm.setSocialLearningFactor(1);
+
+            initialSelfLearningFactor = swarm.getSelfLearningFactor();
+//            swarm.setSelfLearningFactor(0);
+        } else {
+            initialSelfLearningFactor = swarm.getSelfLearningFactor();
+            swarm.setSelfLearningFactor(0);
+        }
+//        double initialInertia = swarm.getInertiaWeight();
+//        if (swarm.exploreMode) {
+//            swarm.setInertiaWeight(1);
+//            swarm.setSocialLearningFactor(0);
+//            swarm.setSelfLearningFactor(0);
+//        }
+        Double2D[] raw = readPheromones(swarm, currentPosition);
+        Double2D socialData = raw[0];
+        Double2D newPosition = raw[1];
+
+        if (swarm.exploreMode) {
+
+            double pos_x, pos_y;
+
+            // avoidance strategy
+            int iteration = 1;
+            Double2D vel = generateRandomVelocity(swarm);
+            pos_x = vel.x + currentPosition.x;
+            pos_y = vel.y + currentPosition.y;
+
+            if (pos_y >= swarm.pheromoneGrid.getHeight()) pos_y = swarm.pheromoneGrid.getHeight() - 1;
+            if (pos_x >= swarm.pheromoneGrid.getWidth()) pos_x = swarm.pheromoneGrid.getWidth() - 1;
+            if (pos_y < 0) pos_y = 0;
+            if (pos_x < 0) pos_x = 0;
+
+
+            while (swarm.map.get((int) pos_x, (int) pos_y) == MapElements.BLACK && iteration < MAX_ROT_ITER) {
+                vel = rotateVelocityDegrees(degrees * iteration, swarm);
+
+                this.obstaculo = true;
+
+                pos_x = vel.x + currentPosition.x;
+                pos_y = vel.y + currentPosition.y;
+
+                if (pos_y >= swarm.pheromoneGrid.getHeight()) pos_y = swarm.pheromoneGrid.getHeight() - 1;
+                if (pos_x >= swarm.pheromoneGrid.getWidth()) pos_x = swarm.pheromoneGrid.getWidth() - 1;
+                if (pos_y < 0) pos_y = 0;
+                if (pos_x < 0) pos_x = 0;
+                iteration++;
+
+                if (iteration >= MAX_ROT_ITER) {
+                    pos_x = currentPosition.x;
+                    pos_y = currentPosition.y;
+                }
+            }
+
+            newPosition = new Double2D(pos_x, pos_y);
+
+            swarm.setInertiaWeight(initialInertia);
         }
 
-        if (this.exploreMode)
-            exploreRobot.execute(swarm);
-        else
-            noExploreRobot.execute(swarm);
+        if (!swarm.buildPheromoneMap && swarm.exploreMode)
+            writePheromones(currentPosition, newPosition, socialData, swarm);
+
+//        if (swarm.exploreMode) {
+//            double x = currentPosition.x + velocity.x, y = currentPosition.y + velocity.y;
+//            if (x > swarm.space.width) x = swarm.space.width - 1;
+//            if (y > swarm.space.height) y = swarm.space.height - 1;
+//            newPosition = new Double2D(x, y);
+//        }
+
+        swarm.space.setObjectLocation(this, newPosition);
+        this.currentPosition = newPosition;
+
+        if (swarm.exploreMode) {
+            swarm.setSocialLearningFactor(initialSocialLearningFactor);
+            swarm.setInertiaWeight(initialInertia);
+        }
+        swarm.setSelfLearningFactor(initialSelfLearningFactor);
 
 //        System.out.println(getClass().getName() + "@" + Integer.toHexString(hashCode()) + "  at " + toString());
 
-//        if(swarm.bestPosition==null||Utils.esMejor(f(swarm.bestPosition),f(newPosition)))
+//        if(swarm.bestPosition==null||Utils.esMejor(f(swarm.bestPosition),f(newPosition))) // TODO:a implementar
     }
 
     Double2D rotateVelocityDegrees(int degrees, SwarmRobotSim swarm) {
@@ -76,7 +138,7 @@ public class Robot implements Steppable {
         return velocity.rotate(toRadians(degrees));
     }
 
-    protected void writePheromones(Double2D currentPosition, Double2D newPosition, Double2D readData, SwarmRobotSim
+    private void writePheromones(Double2D currentPosition, Double2D newPosition, Double2D readData, SwarmRobotSim
             swarm) {
 
         double fitness_newPosition = swarm.function.fitness(newPosition);
@@ -90,8 +152,8 @@ public class Robot implements Steppable {
                 swarm.setBestPosition(localBestPosition);
                 swarm.setBestFitness(fitness_newPosition);
             }
-            numIterNoImprovement = 0;
-        } else if (!exploreMode) numIterNoImprovement++;
+
+        }
 //        f = f > 0 ? min(f, 2) : min(f, 2);
         Double2D vectorAtoB = newPosition.subtract(currentPosition);
         Double2D newTrail;
@@ -108,7 +170,7 @@ public class Robot implements Steppable {
 //            }
     }
 
-    protected Double2D[] readPheromones(SwarmRobotSim st, Double2D currentPosition) {
+    private Double2D[] readPheromones(SwarmRobotSim st, Double2D currentPosition) {
         try {
 
             // get data
@@ -205,17 +267,5 @@ public class Robot implements Steppable {
 
     public void setCurrentPosition(Double2D currentPosition) {
         this.currentPosition = currentPosition;
-    }
-
-    public boolean isExploreMode() {
-        return exploreMode;
-    }
-
-    public void setExploreMode(boolean exploreMode) {
-        this.exploreMode = exploreMode;
-    }
-
-    public int getNumIterNoImprovement() {
-        return numIterNoImprovement;
     }
 }
