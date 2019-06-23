@@ -15,6 +15,7 @@ public class SwarmRobotSim extends SimState {
 
     boolean exploreMode = true;
     int numExploringIter = 20;
+    int maxIterExecution = 600;
 
     private int numRobots = 50;
 
@@ -82,7 +83,7 @@ public class SwarmRobotSim extends SimState {
         space = new Continuous2D(precisionFactor, map.getWidth(), map.getHeight());
         pheromoneGrid = new ObjectGrid2D(map.getWidth(), map.getHeight());
 
-        function = functions.get(0);
+        function = functions.get(1); // 0: lineal, 1: Ackley, 2: Himmelblau
 
         /////////////////////////////////////
         // initialize the pheromone matrix //
@@ -256,5 +257,13 @@ public class SwarmRobotSim extends SimState {
 
     public void setNumExploringIter(int numExploringIter) {
         this.numExploringIter = numExploringIter;
+    }
+
+    public int getMaxIterExecution() {
+        return maxIterExecution;
+    }
+
+    public void setMaxIterExecution(int maxIterExecution) {
+        this.maxIterExecution = maxIterExecution;
     }
 }

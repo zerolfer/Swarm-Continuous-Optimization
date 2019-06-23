@@ -12,34 +12,33 @@ public class Robot implements Steppable {
 
     protected static int MAX_NUM_ITER_NO_IMPROVEMENT = 5;
     static int MAX_ROT_ITER = 18;
-    protected int numIter = 0;
+
+    protected int numExploringIter = 0;
+    protected int numTotalIter = 0;
     protected int numIterNoImprovement = 0;
-    protected Double2D currentPosition;
-    int degrees = 10;
-    boolean obstaculo = false;
+
     boolean exploreMode = true;
-    RobotExploreMode exploreRobot;
-    RobotNoExploreMode noExploreRobot;
+    private RobotExploreMode exploreRobot;
+    private RobotNoExploreMode noExploreRobot;
+
+    Double2D currentPosition;
     private Double2D velocity;
     private Double2D localBestPosition;
+
+    int degrees = 10;
+    boolean obstaculo = false;
 
     public Robot(Double2D position) {
         this(position, new Double2D(1, 1));
     }
 
-    public Robot(Double2D position, Double2D initialVelocity) {
+    Robot(Double2D position, Double2D initialVelocity) {
         this.velocity = initialVelocity;
         localBestPosition = position;
         currentPosition = position;
 
         exploreRobot = new RobotExploreMode(this);
         noExploreRobot = new RobotNoExploreMode(this);
-    }
-
-    Robot(Robot r) {
-        this.velocity = r.velocity;
-        localBestPosition = r.localBestPosition;
-        currentPosition = r.currentPosition;
     }
 
     Double2D generateRandomVelocity(SwarmRobotSim swarm) {
@@ -54,13 +53,22 @@ public class Robot implements Steppable {
     public void step(SimState state) {
         SwarmRobotSim swarm = (SwarmRobotSim) state;
 
-        this.exploreMode = numIterNoImprovement > MAX_NUM_ITER_NO_IMPROVEMENT;
+//        this.setExploreMode(numIterNoImprovement > MAX_NUM_ITER_NO_IMPROVEMENT);
+        exploreMode = false;
+        numTotalIter++;
 
-        if (numIter <= swarm.numExploringIter) {
-            this.exploreMode = true;
-            numIter++;
+        if (numTotalIter <= swarm.maxIterExecution) {
+            if (numIterNoImprovement > MAX_NUM_ITER_NO_IMPROVEMENT) {
+                numExploringIter = 0;
+                numIterNoImprovement = 0;
+                exploreMode = true;
+            }
+
+            if (numExploringIter <= swarm.numExploringIter) {
+                this.exploreMode = true;
+                numExploringIter++;
+            }
         }
-
         if (this.exploreMode)
             exploreRobot.execute(swarm);
         else
@@ -81,16 +89,16 @@ public class Robot implements Steppable {
 
         double fitness_newPosition = swarm.function.fitness(newPosition);
         double f = (fitness_newPosition - swarm.function.fitness(currentPosition));
-        if (f > 0) {
+        if (f > 0 && swarm.function.fitness(localBestPosition) > fitness_newPosition) {
             this.localBestPosition = newPosition; // update best local position
 
-            // if the solution is better than the best of the swarm, we safe the data
+            // if the soFIlution is better than the best of the swarm, we safe the data
             // in order to know the final result found by the system
             if (fitness_newPosition > swarm.getBestFitness()) {
                 swarm.setBestPosition(localBestPosition);
                 swarm.setBestFitness(fitness_newPosition);
-            }
-            numIterNoImprovement = 0;
+            } else
+                numIterNoImprovement = 0;
         } else if (!exploreMode) numIterNoImprovement++;
 //        f = f > 0 ? min(f, 2) : min(f, 2);
         Double2D vectorAtoB = newPosition.subtract(currentPosition);

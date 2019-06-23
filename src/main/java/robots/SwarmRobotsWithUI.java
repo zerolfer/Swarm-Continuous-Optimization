@@ -33,9 +33,11 @@ public class SwarmRobotsWithUI extends GUIState {
         super(state);
     }
 
+    private static SwarmRobotSim sim = new SwarmRobotSim(System.currentTimeMillis());
+
     @SuppressWarnings("WeakerAccess")
     public SwarmRobotsWithUI() {
-        super(new SwarmRobotSim(System.currentTimeMillis()));
+        super(sim);
     }
 
     public static void main(String[] args) {
@@ -43,7 +45,7 @@ public class SwarmRobotsWithUI extends GUIState {
     }
 
     public static String getName() {
-        return "Swarm Firefly Optimization";
+        return "Swarm Robots Optimization";
     }
 
     @Override
@@ -198,6 +200,7 @@ public class SwarmRobotsWithUI extends GUIState {
         if (displayFrame != null) displayFrame.dispose();
         displayFrame = null;
         display = null;
+        System.out.println(sim.pheromoneGrid);
     }
 
     @Override

@@ -1,6 +1,8 @@
 package map;
 
 import functions.TestFunction;
+import functions.TestFunctionAckley;
+import functions.TestFunctionHimmelblau;
 import functions.TestFuntion2;
 import sim.field.grid.ObjectGrid2D;
 import sim.util.Bag;
@@ -106,6 +108,10 @@ public class MapCreator {
             if (x >= grid.getWidth()) break;
 
         }
+
+        functions.add(new TestFunctionAckley());
+        functions.add(new TestFunctionHimmelblau());
+
         Bag res = new Bag();
         res.add(grid);
         res.add(functions);
