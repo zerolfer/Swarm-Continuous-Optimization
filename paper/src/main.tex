@@ -1,4 +1,3 @@
-
 % LLNCS macro package for Springer Computer Science
 
 \documentclass[runningheads]{llncs}
@@ -55,73 +54,42 @@
     %
 
     \section{Introducción}
-    En los últimos años se ha observado que existen diversos problemas cuya naturaleza requiere de un enfoque
-    multi-agente, pues un único agente no es capaz de resolverlos.
-    Utilizando la Inteligencia Colectiva (CI), ya mediante una comunicación directa o indirecta entre los agentes,
-    se han podido resolver problemas tanto en el ámbito de la robótica, tales como la planificación de rutas o
-    construcción de estructuras complejas~\cite{collectiveConstruction}, así como en el ámbito de la optimización,
-    esto es, de encontrar la mejor solución --o al menos, una de buena calidad-- para un problema dado.
-    En este artículo, analizaremos un posible sistema multiagente propuesto inicialmente en~\cite{initialPaper}
-    con el objetivo de hallar la posición óptima de un espacio de búsqueda y su comportamiento frente a obstáculos físicos.
-    La descripción del problema y las técnicas empleadas para su solución se encuentra en el
-    \refcruzada{Apartado}{sec:descripcion}, y los resultados experimentales y el ajuste paramétrico en
-    el \refcruzada{Apartado}{sec:}. %TODO poner referencias!!
+    En los últimos años se ha observado que existen diversos problemas cuya naturaleza requiere de un enfoque multi-agente, pues un único agente no es capaz de resolverlos.
+    Utilizando la Inteligencia Colectiva (CI), ya mediante una comunicación directa o indirecta entre los agentes, se han podido resolver problemas tanto en el ámbito de la robótica, tales como la planificación de rutas o construcción de estructuras complejas \cite{collectiveConstruction}, así como en el ámbito de la optimización, esto es, de encontrar la mejor solución --o al menos, una de buena calidad-- para un problema dado.
+    En este artículo, analizaremos un posible sistema multiagente propuesto inicialmente en ~\cite{initialPaper}  con el objetivo de hallar la posición óptima de un espacio de búsqueda y su comportamiento frente a obstáculos físicos.
+    La descripción del problema y las técnicas empleadas para su solución se encuentra en el \refcruzada{Apartado}{sec:descripcion}, y los resultados experimentales y el ajuste paramétrico en el \refcruzada{Apartado}{sec:}. %TODO poner referencias!!
 
     \section{Descripcion del problema}
     \label{sec:descripcion}
 
-    Tal y como se ha introducido anteriormente, el problema a resolver se basa en realizar una búsqueda dentro de un
-    espacio bidimensional limitado a un cierto tamaño. Trataremos de maximizar una función conocida $f(x,y)$, sujeta
-    a las restricciones de espacio impuestas inicialmente, es decir, al tamaño del mapa por el que se moverán los agentes.
-    Para su desarrollo, se ha utilizado como base la técnica propuesta por~\cite{initialPaper}, sin embargo ésta no
-    contempla el uso de obstáculos --ciertas posiciones del espacio que no pueden ser traspasados por el robot-- dentro
-    del espacio de búsqueda, por lo que se ha extendido y adaptado.
-    En el \refcruzada{Apartado}{3} se muestran algunos ejemplos que lo ilustran, utilizando tanto obstáculos como
-    diferentes funciones objetivo %TODO referencias
+    Tal y como se ha introducido anteriormente, el problema a resolver se basa en realizar una búsqueda dentro de un espacio bidimensional limitado a un cierto tamaño. Trataremos de maximizar una función conocida $f(x,y)$, sujeta a las restricciones de espacio impuestas inicialmente, es decir, al tamaño del mapa por el que se moverán los agentes.
+    Para su desarrollo, se ha utilizado como base la técnica propuesta por ~\cite{initialPaper}, sin embargo ésta no contempla el uso de obstáculos --ciertas posiciones del espacio que no pueden ser traspasados por el robot-- dentro del espacio de búsqueda, por lo que se ha extendido y adaptado.
+    En el \refcruzada{Apartado}{3} se muestran algunos ejemplos que lo ilustran, utilizando tanto obstáculos como diferentes funciones objetivo %TODO referencias
 
 
     \subsection{El espacio de búsqueda}
-    La representación propuesta en~\cite{initialPaper} consiste en discretizar el espacio de búsqueda en forma de una
-    cuadrícula (\textit{grid}). Ésta es una de las formas clásicas más sencillas de representar un espacio de búsqueda,
-    sin embargo, tal y como se apuntan en~\cite{AIRobotics}, este tipo de representación conlleva a una
-    \textit{digitalización} o discretización del espacio con una cierta granularidad dada. A mayor granulidad,
-    mayor fidelidad en la representación del espacio. En el artículo original, se utiliza una única granularidad
-    sobre una cuadrícula $10 \times 10$. En el \refcruzada{Apartado}{3} se prueban diferentes tamaños. %TODO es esto cierto??
+    La representación propuesta en ~\cite{initialPaper} consiste en discretizar el espacio de búsqueda en forma de una cuadrícula (\textit{grid}). Ésta es una de las formas clásicas más sencillas de representar un espacio de búsqueda, sin embargo, tal y como se apuntan en ~\cite{AIRobotics}, este tipo de representación conlleva a una \textit{digitalización} o discretización del espacio con una cierta granularidad dada. A mayor granularidad, mayor fidelidad en la representación del espacio. En el artículo original, se utiliza una única granularidad sobre una cuadrícula $10 \times 10$. En el \refcruzada{Apartado}{3} se prueban diferentes tamaños. %TODO es esto cierto??
 
-    Podemos considerar el espacio de búsqueda a efectos prácticos, como una colina tridimensional donde la tercera
-    dimensión representa la intensidad de una señal que sigue una función (no necesariamente lineal). La finalidad
-    del sistema, es que los agentes colaboren para alcanzar el punto más álgido.
+    Podemos considerar el espacio de búsqueda a efectos prácticos, como una colina tridimensional donde la tercera dimensión representa la intensidad de una señal que sigue una función (no necesariamente lineal). La finalidad del sistema es que los agentes colaboren para alcanzar el punto más álgido.
 
     \subsection{La estrategia de resolución}
 
-    Los agentes llevan a cabo movimientos sencillos empleando información en común entre sí, pero de forma indirecta,
-    a través del medio. Éste tipo de soluciones reciben el nombre de sistemas basados en
-    \textit{estigmergia}~\cite{stigmergy}.
+    Los agentes llevan a cabo movimientos sencillos empleando información en común entre sí, pero de forma indirecta, a través del medio. Éste tipo de soluciones reciben el nombre de sistemas basados en \textit{estigmergia} ~\cite{stigmergy}.
     % lo muevo como parrafo para evitar un bad-box
-    Como buen sistema multiagente, podemos observar una capacidad de auto-organización (\textit{self-organization}),
-    mediante el cual emerge un comportamiento de características más complejas, que en este caso consisten en localizar
-    y converger a un lugar concreto del mapa.
+    Como buen sistema multiagente, podemos observar una capacidad de auto-organización (\textit{self-organization}), mediante el cual emerge un comportamiento de características más complejas, que en este caso consisten en localizar y converger a un lugar concreto del mapa.
 
-    En este enfoque, los agentes se moverán libremente por el espacio, sin limitarse a la cuadrícula, y depositarán
-    en las respectivas celdas sobre las que se encuentre, una información dada que llamaremos feromonas, que estarán
-    representadas mediante un vector cuya dirección y sentido sea la más prometedora del espacio y cuyo módulo será
-    proporcional a la mejora que aporta dicho movimiento al valor de la función objetivo.
+    En este enfoque, los agentes se moverán libremente por el espacio, sin limitarse a la cuadrícula, y depositarán en las respectivas celdas sobre las que se encuentre, una información dada que llamaremos feromonas, que estarán representadas mediante un vector cuya dirección y sentido sea la más prometedora del espacio y cuyo módulo será proporcional a la mejora que aporta dicho movimiento al valor de la función objetivo.
 
-    El depósito de dichas feromonas se lleva a cabo siguiente la siguiente estrategia, que está basada en el
-    comportamiento de un sistema PSO (\textit{Particle Swarm Optimization} \cite{PSO}: cada agente se moverá a una
-    cierta velocidad, que se verá afectada por la información del entorno según la siguiente fórmula:
+    El depósito de dichas feromonas se lleva a cabo siguiente la siguiente estrategia, que está basada en el comportamiento de un sistema PSO (\textit{Particle Swarm Optimization} ~\cite{PSO}: cada agente se moverá a una cierta velocidad, que se verá afectada por la información del entorno según la siguiente fórmula:
 
 
     \[
         \vec{V_i^{k+1}} = \omega \cdot \vec{V_i^k} + c_1 \cdot r_1(\vec{P_i} - \vec{V_i^k}) + c_2 \cdot r_2 \cdot \vec{s_n}
     \]
 
-    Donde $\omega$, $c_1$ y $c_2$ son parámetros del algoritmo que denominaremos el factor de inercia, el factor de
-    aprendizaje local y el factor de aprendizaje social respectivamente. Y $r_1, r_2 \sim U[0,1]$ son dos factores
-    aleatorios independientes uniformemente distribuidos.
+    Donde $\omega$, $c_1$ y $c_2$ son parámetros del algoritmo que denominaremos el factor de inercia, el factor de aprendizaje local y el factor de aprendizaje social respectivamente. Y $r_1, r_2 \sim U[0,1]$ son dos factores aleatorios independientes uniformemente distribuidos.
     El agente almacenará locamente la mejor solución hallada por el mismo hasta el momento, $\vec{P_i}$.
-    Y por último, $\vec{s_n}$ es el vector de feromonas obtenido de la celda del mapa correspondiente a la
-    posición $X_A$ del robot.
+    Y por último, $\vec{s_n}$ es el vector de feromonas obtenido de la celda del mapa correspondiente a la posición $X_A$ del robot.
 
     \begin{figure}
         \includegraphics[scale=0.5]{"vectores"}
@@ -130,37 +98,26 @@
         \label{fig:1}
     \end{figure}
 
-    Si observamos la \refcruzada{Fig.}{fig:1}, podemos ver cuales serían los puntos A y B durante un posible movimiento
-    de un agente. $\overline{AC}$ sería un posible movimiento de otro agente que ha pasado previamente por la misma
-    celda (que contiene al punto $A$) y ha escrito en ella el vector $s_2$
+    Si observamos la \refcruzada{Fig.}{fig:1}, podemos ver cuáles serían los puntos A y B durante un posible movimiento de un agente. $\overline{AC}$ sería un posible movimiento de otro agente que ha pasado previamente por la misma celda (que contiene al punto $A$) y ha escrito en ella el vector $s_2$
 
-    El vector resultante $s$ se calcula en base a la información heurística dada por la intensidad de la señal de la
-    función objetivo según la formula
+    El vector resultante $s$ se calcula en base a la información heurística dada por la intensidad de la señal de la función objetivo según la formula
     \begin{equation}
         \label{ec:1}
         \includegraphics[scale=0.5]{"formula feromonas"}
         \centering
     \end{equation}
-    Nótese que la dirección vendrá dada posición hacia la que se está moviendo el robot, mientras que el sentido y
-    el módulo del mismo dependerá de la función objetivo de forma directamente proporcional a ésta.
+    Nótese que la dirección vendrá dada posición hacia la que se está moviendo el robot, mientras que el sentido y el módulo del mismo dependerá de la función objetivo de forma directamente proporcional a ésta.
 
-    Una vez calculado el nuevo rastro de feromonas a depositar, se utilizará la siguiente formula para combinar las
-    feromonas ya existentes en la celda leídas anteriormente con la nueva generada, basada en este caso, en la
-    evaporación de las feromonas en ACO (\textit{Ant Colony Optimization})~\cite{ACO}:
+    Una vez calculado el nuevo rastro de feromonas a depositar, se utilizará la siguiente fórmula para combinar las feromonas ya existentes en la celda leídas anteriormente con la nueva generada, basada en este caso, en la evaporación de las feromonas en ACO (\textit{Ant Colony Optimization}) ~\cite{ACO}:
     \[
         \vec{s_n^{m+1}=(1-c_d)\cdot\vec{s_n^m+c_a\cdot\vec{s_i}}}
     \]
-    En este caso, el agente $i$ es el 1, pues es $s_1$ el vector calculado. $c_a$ es el factor de superposición
-    y $c_d$ de evaporación, nuevamente parámetros del algoritmo.
+    En este caso, el agente $i$ es el 1, pues es $s_1$ el vector calculado. $c_a$ es el factor de superposición y $c_d$ de evaporación, nuevamente parámetros del algoritmo.
 
     La nueva posición del agente se calculará como la suma vectorial de su posición con la nueva velocidad,
     \[  \vec{ X_i^{k+1} } = \vec{X_i^k} + \vec{ V_i^{k+1} }  \]
 
-    Por último, para poder evitar los obstáculos, en caso de que el agente no sea capaz de mejorar su mejor solución
-    local tras un numero máximo de iteraciones, se generará una nueva velocidad con dirección y sentido arbitrario,
-    y con módulo $V_{max}$, la velocidad máxima posible de los agentes. En caso de no poder sortear el obstáculo, se
-    trata durante otro cierto numero de iteraciones, de rotar el vector velocidad generado anteriormente una cantidad
-    de grados, en este caso de $10$ (véase~\cite{referencedPaper}).
+    Por último, para poder evitar los obstáculos, en caso de que el agente no sea capaz de mejorar su mejor solución local tras un número máximo de iteraciones, se generará una nueva velocidad con dirección y sentido arbitrario, y con módulo $V_{max}$, la velocidad máxima posible de los agentes. En caso de no poder sortear el obstáculo, se trata durante otro cierto número de iteraciones, de rotar el vector velocidad generado anteriormente una cantidad de grados, en este caso de $10$ (véase ~\cite{referencedPaper}).
 
 
     \section{Resultados experimentales}
@@ -172,10 +129,6 @@
 
 
     \subsection{Pruebas con obstáculos}
-
-
-
-
 
 
 
@@ -207,13 +160,13 @@
         tables.}\label{tab1}
         \begin{tabular}{|l|l|l|}
             \hline
-            Heading level &  Example & Font size and style\\
+            Heading level & Example & Font size and style\\
             \hline
-            Title (centered)  & {\Large\bfseries Lecture Notes} 				 & 14 point, bold   \\
-            1st-level heading & {\large\bfseries 1 Introduction} 				 & 12 point, bold   \\
-            2nd-level heading & {\bfseries 2.1 Printing Area} 					 & 10 point, bold   \\
+            Title (centered)  & {\Large\bfseries Lecture Notes}                 & 14 point, bold   \\
+            1st-level heading & {\large\bfseries 1 Introduction}                 & 12 point, bold   \\
+            2nd-level heading & {\bfseries 2.1 Printing Area}                     & 10 point, bold   \\
             3rd-level heading & {\bfseries Run-in Heading in Bold.} Text follows & 10 point, bold   \\
-            4th-level heading & {\itshape Lowest Level Heading.} Text follows 	 & 10 point, italic \\
+            4th-level heading & {\itshape Lowest Level Heading.} Text follows & 10 point, italic \\
             \hline
         \end{tabular}
     \end{table}
