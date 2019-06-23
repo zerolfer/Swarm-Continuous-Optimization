@@ -3,3 +3,7 @@
 lib/
 target/
 src/test/
+paper/auxil/
+auxil/
+paper/out/
+out/
