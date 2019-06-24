@@ -13,7 +13,12 @@
 \graphicspath{{img/}}
 
 \newcommand{\refcruzada}[2]{\hyperref[#2]{#1~\ref{#2}}}
+
 \newcommand{\comment}[1]{}
+
+\newcommand{\addfigure}[2]{\begin{figure}
+                               \includegraphics[scale=0.5]{#1} \centering \caption{#2} \label{fig:1}
+\end{figure}}
 
 % Used for displaying a sample figure. If possible, figure files should
 % be included in EPS format.
@@ -92,7 +97,7 @@
     Y por último, $\vec{s_n}$ es el vector de feromonas obtenido de la celda del mapa correspondiente a la posición $X_A$ del robot.
 
     \begin{figure}
-        \includegraphics[scale=0.5]{vectores}
+        \includegraphics[scale=0.5]{"vectores"}
         \centering
         \caption{}
         \label{fig:1}
@@ -126,7 +131,22 @@
 
 
     \subsection{Variaciones en la función objetivo}
+    En el artículo original \cite{initialPaper} unícamente se utilizaba una función lineal, cuyo punto maxímo se hallaba en el $(8,8)$ de una cuadrícula de $10\times10$, ésto es así debido a que el enfoque de sus autores no era la optimización de la misma, sino una futura implementación a nivel físico, donde la función objetivo sería implementada mediante una señal (acústica o lumínica). Para analizar el potencial de éste sistema, se han probado algunas de las conocidas funciones.
 
+    \subsubsection{Función de Ackley} Propuesta en \cite{AckleyFunction} se define como
+    \[-20 \cdot exp[-0.2 \cdot \sqrt{0.5 \cdot (x^2 + y^2)}] - exp[0.5 ( \cos(2 \pi x)
+    + \cos(2 \pi y))] + e + 20)\]
+    Al estar pensada para minimización y definida en el intervalo $[-5,5]$, consideramos la función $f'(x,y)=-f(x-5, y-5)$. Se trata de una función no convexa, con una gran cantidad de máximos locales, como puede apreciarse en la \refcruzada{Fig.}{fig:2}, siendo el máximo absoluto el punto $(5,5)$
+
+    \begin{figure}
+        \includegraphics[scale=0.5]{graficas_ackley}
+        \centering
+        \caption{}
+        \label{fig:2}
+    \end{figure}
+
+    \subsubsection{Funcion Lineal}
+    $f(x,y)=-(x-g_x)^2 - (y - g_y)^2 + 700$; con maximo en $(g_x,g_y)$
 
     \subsection{Pruebas con obstáculos}
 
