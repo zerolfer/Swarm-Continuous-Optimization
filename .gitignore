@@ -7,3 +7,10 @@ paper/auxil/
 auxil/
 paper/out/
 out/
+*.out
+*.blg
+*.log
+*.bbl
+*.gz
+*.pdf
+*.aux
