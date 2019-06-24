@@ -92,48 +92,9 @@
     % lo muevo como parrafo para evitar un bad-box
     Como buen sistema multiagente, podemos observar una capacidad de auto-organización (\textit{self-organization}), mediante el cual emerge un comportamiento de características más complejas, que en este caso consisten en localizar y converger a un lugar concreto del mapa.
 
-    En este enfoque, los agentes se moverán libremente por el espacio, sin limitarse a la cuadrícula, y depositarán en las respectivas celdas sobre las que se encuentre, una información dada que llamaremos feromonas, que estarán representadas mediante un vector cuya dirección y sentido sea la más prometedora del espacio y cuyo módulo será proporcional a la mejora que aporta dicho movimiento al valor de la función objetivo.
-
-    El depósito de dichas feromonas se lleva a cabo siguiente la siguiente estrategia, que está basada en el comportamiento de un sistema PSO (\textit{Particle Swarm Optimization} ~\cite{PSO}: cada agente se moverá a una cierta velocidad, que se verá afectada por la información del entorno según la siguiente fórmula:
-
-
-    \[
-        \vec{V_i^{k+1}} = \omega \cdot \vec{V_i^k} + c_1 \cdot r_1(\vec{P_i} - \vec{V_i^k}) + c_2 \cdot r_2 \cdot \vec{s_n}
-    \]
-
-    Donde $\omega$, $c_1$ y $c_2$ son parámetros del algoritmo que denominaremos el factor de inercia, el factor de aprendizaje local y el factor de aprendizaje social respectivamente. Y $r_1, r_2 \sim U[0,1]$ son dos factores aleatorios independientes uniformemente distribuidos.
-    El agente almacenará locamente la mejor solución hallada por el mismo hasta el momento, $\vec{P_i}$.
-    Y por último, $\vec{s_n}$ es el vector de feromonas obtenido de la celda del mapa correspondiente a la posición $X_A$ del robot.
-
-    \comment{ % por falta de espacio se omite la figura y su párrafo
-    \begin{figure}[htbp]
-        \includegraphics[width=0.8\textwidth]{"vectores"}
-        \centering
-        \caption{}
-        \label{fig:1}
-    \end{figure}
-
-
-    Si observamos la \refcruzada{Fig.}{fig:1}, podemos ver cuáles serían los puntos A y B durante un posible movimiento de un agente. $\overline{AC}$ sería un posible movimiento de otro agente que ha pasado previamente por la misma celda (que contiene al punto $A$) y ha escrito en ella el vector $s_2$
-
-
-    }
-    El vector resultante $s$ se calcula en base a la información heurística dada por la intensidad de la señal de la función objetivo según la formula
-    \begin{equation}
-        \label{ec:1}
-        \includegraphics[scale=0.5]{"formula feromonas"}
-        \centering
-    \end{equation}
-    Nótese que la dirección vendrá dada posición hacia la que se está moviendo el robot, mientras que el sentido y el módulo del mismo dependerá de la función objetivo de forma directamente proporcional a ésta.
-
-    Una vez calculado el nuevo rastro de feromonas a depositar, se utilizará la siguiente fórmula para combinar las feromonas ya existentes en la celda leídas anteriormente con la nueva generada, basada en este caso, en la evaporación de las feromonas en ACO (\textit{Ant Colony Optimization}) ~\cite{ACO}:
-    \[
-        \vec{s_n^{m+1}=(1-c_d)\cdot\vec{s_n^m+c_a\cdot\vec{s_i}}}
-    \]
-    En este caso, el agente $i$ es el 1, pues es $s_1$ el vector calculado. $c_a$ es el factor de superposición y $c_d$ de evaporación, nuevamente parámetros del algoritmo.
-
-    La nueva posición del agente se calculará como la suma vectorial de su posición con la nueva velocidad,
-    \[  \vec{ X_i^{k+1} } = \vec{X_i^k} + \vec{ V_i^{k+1} }  \]
+    En este enfoque, los agentes se moverán libremente por el espacio, sin limitarse a la cuadrícula, y depositarán en las respectivas celdas sobre las que se encuentre, una información dada que llamaremos feromonas, que estarán representadas mediante un vector cuya dirección y sentido sea la más prometedora del espacio y cuyo módulo será proporcional a la mejora que aporta dicho movimiento al valor de la función objetivo. El cálculo de dichas feromonas se lleva a cabo siguiendo una estrategia basada en un sistema PSO (\textit{Particle Swarm Optimization})~\cite{PSO} combinado con información heurística dada por la función objetivo según las formulas descritas en el articulo \cite{initialPaper}, mientras que el depósito y combinación de las feromonas en el entorno se basa en este caso en los sistemas ACO (\textit{Ant Colony Optimization})~\cite{ACO}.
+    
+    Nótese que la dirección vendrá dada por la posición hacia la que se está moviendo el robot, mientras que el sentido y el módulo del mismo dependerá de la función objetivo de forma directamente proporcional a ésta.
 
     Por último, para poder evitar los obstáculos, en caso de que el agente no sea capaz de mejorar su mejor solución local tras un número máximo de iteraciones, se generará una nueva velocidad con dirección y sentido arbitrario, y con módulo $V_{max}$, la velocidad máxima posible de los agentes. En caso de no poder sortear el obstáculo, se trata durante otro cierto número de iteraciones, de rotar el vector velocidad generado anteriormente una cantidad de grados, en este caso de $10$ (véase~\cite{referencedPaper}).
 
