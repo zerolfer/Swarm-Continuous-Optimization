@@ -14,3 +14,5 @@ out/
 *.gz
 *.pdf
 *.aux
+Plotter3D/venv/
+Plotter3D/venv2/
