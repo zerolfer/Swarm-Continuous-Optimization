@@ -13,17 +13,18 @@ def himmelblau(x, y):
 
 
 def g(x, y):
-    return himmelblau(x - 5, y - 5)
+    return ackley(x - 5, y - 5)
 
 
-start, end, precission = 0, 15, 500
+start, end, precission = 0, 20, 500
 x = np.linspace(start, end, precission)
 y = np.linspace(start, end, precission)
 X, Y = np.meshgrid(x, y)
 Z = g(X, Y)
-fig = plt.figure()
+
+plt.figure()
 ax = plt.axes(projection='3d')
-ax.plot_surface(X, Y, Z, rstride=1, cstride=1, cmap='viridis', edgecolor='none')
+ax.plot_surface(X, Y, Z, rstride=20, cstride=20, cmap='viridis', edgecolor='none', shade=True)
 
 ax.set_xlabel('x')
 ax.set_ylabel('y')

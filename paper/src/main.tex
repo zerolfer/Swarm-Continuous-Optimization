@@ -105,25 +105,25 @@
 
 
     \subsection{Variaciones en la función objetivo}
-    En el artículo original \cite{initialPaper} unícamente se utilizaba una función lineal, cuyo punto maxímo se hallaba en el $(8,8)$ de una cuadrícula de $10\times10$, ésto es así debido a que el enfoque de sus autores no era la optimización de la misma, sino una futura implementación a nivel físico, donde la función objetivo sería implementada mediante una señal (acústica o lumínica). Para analizar el potencial de éste sistema, se han probado algunas de las conocidas funciones.
-
-    \begin{figure}[htbp]
-        \centering
-        \subfigure[Gráfica sobre 3 ejes]{
-        \includegraphics[width=0.5\textwidth]{graficas_ackley}
-        \label{fig:2:a}
-        }
-        \subfigure[Curvas de nivel]{
-        \includegraphics[width=0.4\textwidth]{graficas_ackley_contorno}
-        \label{fig:2:b}
-        }
-        \caption{Representación de la función Ackley modificada para $x,y\in[0,20]$}
-    \end{figure}
+    En el artículo original \cite{initialPaper} únicamente se utilizaba una función lineal, cuyo punto máximo se hallaba en el $(8,8)$ de una cuadrícula de $10\times10$, ésto es así debido a que el enfoque de sus autores no era la optimización de la misma, sino una futura implementación a nivel físico, donde la función objetivo sería implementada mediante una señal (acústica o lumínica). Para analizar el potencial de éste sistema, se han probado algunas funciones de optimización conocidas, recopiladas en \cite{WebFuncionesOptimizacion}.
 
     \subsubsection{Función de Ackley} Propuesta en \cite{AckleyFunction} se define como
-    \[-20 \cdot exp[-0.2 \cdot \sqrt{0.5 \cdot (x^2 + y^2)}] - exp[0.5 ( \cos(2 \pi x)
+    \[ f(x,y)=-20 \cdot exp[-0.2 \cdot \sqrt{0.5 \cdot (x^2 + y^2)}] - exp[0.5 ( \cos(2 \pi x)
     + \cos(2 \pi y))] + e + 20)\]
     Al estar pensada para minimización y definida en el intervalo $[-5,5]$, consideramos la función $f'(x,y)=(-1)\cdot f(x-5, y-5)$. Se trata de una función no convexa, con una gran cantidad de máximos locales, como puede apreciarse en la \refcruzada{Fig.}{fig:2:b}, siendo el máximo absoluto el punto $(5,5)$.
+    
+    \begin{figure}[htbp]
+    	\centering
+    	\subfigure[Gráfica sobre 3 ejes]{
+    		\includegraphics[width=0.4\textwidth]{graficas_ackley}
+    		\label{fig:2:a}
+    	}
+    	\subfigure[Curvas de nivel]{
+    		\includegraphics[width=0.5\textwidth]{graficas_ackley_contorno}
+    		\label{fig:2:b}
+    	}
+    	\caption{Representación de la función Ackley modificada para $x,y\in[0,20]$}
+    \end{figure}
     
     Los resultados tras 1\,300 iteraciones es el de la \refcruzada{Fig.}{fig:3}, como puede verse, se produce una convergencia casi total hace el punto $(5,5)$, sin embargo el mapa de feromonas construido no es útil, pues prácticamente todos los valores son de módulo cero.
 
@@ -134,18 +134,35 @@
 		\caption{Resultados experimentales empleando la función Ackley}
 	\end{figure}
 
-    \subsubsection{Función de Himmelblau} Propuesta en \cite{HimmelblauFunction} se define como
-    \[  -(x^2 + y - 11)^2 - (x + y^2 - 7)^2  \] para maximización, contiene una meseta en la parte superior, por lo que no existe una única solución (ver \refcruzada{Fig.}{fig:4}.
+    \subsubsection{Función de Himmelblau} Propuesta en \cite{HimmelblauFunction} se define para el caso de una maximización como
+    \[  f(x,y)=-(x^2 + y - 11)^2 - (x + y^2 - 7)^2  \] 
+    Contiene una meseta en la parte superior, por lo que no existe una única solución (ver \hyperref[fig:4]{Fig. 3}).
+    En cuanto a los resultados obtenidos, mostrados en la \hyperref[fig:5]{Fig. 4}, el sistema no es capaz de converger, en su lugar, se forman 3 grupos de agentes en torno a los 4 posibles óptimos que tiene la función (ver \cite{WebFuncionesOptimizacion} para más información)
+
 
     \begin{figure}[htbp]
-	\centering
-	\includegraphics[width=0.8\textwidth]{Resultado_himmelblau}
-	\label{fig:4}
-	\caption{Resultados experimentales empleando la función Ackley}
-\end{figure}
+		\centering
+		\subfigure[Gráfica sobre 3 ejes]{
+			\includegraphics[width=0.4\textwidth]{graficas_himmelblau}
+		}
+		\subfigure[Curvas de nivel]{
+			\includegraphics[width=0.5\textwidth]{graficas_himmelblau_contorno}
+		}
+		\label{fig:4}
+		\caption{Representación de la función Himmelblau modificada para $x,y\in[0,10]$}
+	\end{figure}
+
+balbalblbalal
+
+    \begin{figure}[htbp]
+   	\centering
+   	\includegraphics[width=0.5\textwidth]{Resultados_himmelblau_10x10}
+   	\label{fig:5}
+   	\caption{Resultados experimentales empleando la función Himmelblau sobre una cuadricula $10\times10$}
+   \end{figure}
 
 \comment{
-    \subsubsection{Funcion Lineal}
+    \subsubsection{Función Lineal}
     $f(x,y)=-(x-g_x)^2 - (y - g_y)^2 + 700$; con máximo en $(g_x,g_y)$
 }
     \subsection{Pruebas con obstáculos}
