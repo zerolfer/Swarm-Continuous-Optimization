@@ -2,16 +2,25 @@
 
 \documentclass[runningheads]{llncs}
 %
+%
+% Packages
+%
 \usepackage[bookmarks,hidelinks]{hyperref}
 %
 \usepackage{graphicx}
+\usepackage{subfigure}
 %
 \usepackage{amsmath}
+%
 \usepackage[T1]{fontenc}
+%\usepackage[spanish]{babel}
 \usepackage[utf8]{inputenc}
-
+%
 \graphicspath{{img/}}
 
+%
+% Personal Commands
+%
 \newcommand{\refcruzada}[2]{\hyperref[#2]{#1~\ref{#2}}}
 
 \newcommand{\comment}[1]{}
@@ -60,16 +69,15 @@
 
     \section{Introducción}
     En los últimos años se ha observado que existen diversos problemas cuya naturaleza requiere de un enfoque multi-agente, pues un único agente no es capaz de resolverlos.
-    Utilizando la Inteligencia Colectiva (CI), ya mediante una comunicación directa o indirecta entre los agentes, se han podido resolver problemas tanto en el ámbito de la robótica, tales como la planificación de rutas o construcción de estructuras complejas \cite{collectiveConstruction}, así como en el ámbito de la optimización, esto es, de encontrar la mejor solución --o al menos, una de buena calidad-- para un problema dado.
+    Utilizando la Inteligencia Colectiva (CI), ya sea mediante una comunicación directa o indirecta entre los agentes, se han podido resolver problemas tanto en el ámbito de la robótica, tales como la planificación de rutas o construcción de estructuras complejas \cite{collectiveConstruction}, así como en el ámbito de la optimización, esto es, de encontrar la mejor solución --o al menos, una de buena calidad-- para un problema dado.
     En este artículo, analizaremos un posible sistema multiagente propuesto inicialmente en ~\cite{initialPaper}  con el objetivo de hallar la posición óptima de un espacio de búsqueda y su comportamiento frente a obstáculos físicos.
     La descripción del problema y las técnicas empleadas para su solución se encuentra en el \refcruzada{Apartado}{sec:descripcion}, y los resultados experimentales y el ajuste paramétrico en el \refcruzada{Apartado}{sec:}. %TODO poner referencias!!
 
-    \section{Descripcion del problema}
+    \section{Descripción del problema}
     \label{sec:descripcion}
-
     Tal y como se ha introducido anteriormente, el problema a resolver se basa en realizar una búsqueda dentro de un espacio bidimensional limitado a un cierto tamaño. Trataremos de maximizar una función conocida $f(x,y)$, sujeta a las restricciones de espacio impuestas inicialmente, es decir, al tamaño del mapa por el que se moverán los agentes.
     Para su desarrollo, se ha utilizado como base la técnica propuesta por ~\cite{initialPaper}, sin embargo ésta no contempla el uso de obstáculos --ciertas posiciones del espacio que no pueden ser traspasados por el robot-- dentro del espacio de búsqueda, por lo que se ha extendido y adaptado.
-    En el \refcruzada{Apartado}{3} se muestran algunos ejemplos que lo ilustran, utilizando tanto obstáculos como diferentes funciones objetivo %TODO referencias
+    En el \refcruzada{Apartado}{3} se muestran algunos ejemplos que lo ilustran, utilizando tanto obstáculos como diferentes funciones objetivo. %TODO referencias
 
 
     \subsection{El espacio de búsqueda}
@@ -79,7 +87,8 @@
 
     \subsection{La estrategia de resolución}
 
-    Los agentes llevan a cabo movimientos sencillos empleando información en común entre sí, pero de forma indirecta, a través del medio. Éste tipo de soluciones reciben el nombre de sistemas basados en \textit{estigmergia} ~\cite{stigmergy}.
+    Los agentes llevan a cabo movimientos sencillos empleando información en común entre sí, pero de forma indirecta, a través del medio. Éste tipo de soluciones reciben el nombre de sistemas basados en \textit{estigmergia}~\cite{stigmergy}.
+    
     % lo muevo como parrafo para evitar un bad-box
     Como buen sistema multiagente, podemos observar una capacidad de auto-organización (\textit{self-organization}), mediante el cual emerge un comportamiento de características más complejas, que en este caso consisten en localizar y converger a un lugar concreto del mapa.
 
@@ -96,15 +105,19 @@
     El agente almacenará locamente la mejor solución hallada por el mismo hasta el momento, $\vec{P_i}$.
     Y por último, $\vec{s_n}$ es el vector de feromonas obtenido de la celda del mapa correspondiente a la posición $X_A$ del robot.
 
-    \begin{figure}
-        \includegraphics[scale=0.5]{"vectores"}
+    \comment{ % por falta de espacio se omite la figura y su párrafo
+    \begin{figure}[htbp]
+        \includegraphics[width=0.8\textwidth]{"vectores"}
         \centering
         \caption{}
         \label{fig:1}
     \end{figure}
 
+
     Si observamos la \refcruzada{Fig.}{fig:1}, podemos ver cuáles serían los puntos A y B durante un posible movimiento de un agente. $\overline{AC}$ sería un posible movimiento de otro agente que ha pasado previamente por la misma celda (que contiene al punto $A$) y ha escrito en ella el vector $s_2$
 
+
+    }
     El vector resultante $s$ se calcula en base a la información heurística dada por la intensidad de la señal de la función objetivo según la formula
     \begin{equation}
         \label{ec:1}
@@ -122,7 +135,7 @@
     La nueva posición del agente se calculará como la suma vectorial de su posición con la nueva velocidad,
     \[  \vec{ X_i^{k+1} } = \vec{X_i^k} + \vec{ V_i^{k+1} }  \]
 
-    Por último, para poder evitar los obstáculos, en caso de que el agente no sea capaz de mejorar su mejor solución local tras un número máximo de iteraciones, se generará una nueva velocidad con dirección y sentido arbitrario, y con módulo $V_{max}$, la velocidad máxima posible de los agentes. En caso de no poder sortear el obstáculo, se trata durante otro cierto número de iteraciones, de rotar el vector velocidad generado anteriormente una cantidad de grados, en este caso de $10$ (véase ~\cite{referencedPaper}).
+    Por último, para poder evitar los obstáculos, en caso de que el agente no sea capaz de mejorar su mejor solución local tras un número máximo de iteraciones, se generará una nueva velocidad con dirección y sentido arbitrario, y con módulo $V_{max}$, la velocidad máxima posible de los agentes. En caso de no poder sortear el obstáculo, se trata durante otro cierto número de iteraciones, de rotar el vector velocidad generado anteriormente una cantidad de grados, en este caso de $10$ (véase~\cite{referencedPaper}).
 
 
     \section{Resultados experimentales}
@@ -133,21 +146,47 @@
     \subsection{Variaciones en la función objetivo}
     En el artículo original \cite{initialPaper} unícamente se utilizaba una función lineal, cuyo punto maxímo se hallaba en el $(8,8)$ de una cuadrícula de $10\times10$, ésto es así debido a que el enfoque de sus autores no era la optimización de la misma, sino una futura implementación a nivel físico, donde la función objetivo sería implementada mediante una señal (acústica o lumínica). Para analizar el potencial de éste sistema, se han probado algunas de las conocidas funciones.
 
+    \begin{figure}[htbp]
+        \centering
+        \subfigure[Gráfica sobre 3 ejes]{
+        \includegraphics[width=0.5\textwidth]{graficas_ackley}
+        \label{fig:2:a}
+        }
+        \subfigure[Curvas de nivel]{
+        \includegraphics[width=0.4\textwidth]{graficas_ackley_contorno}
+        \label{fig:2:b}
+        }
+        \caption{Representación de la función Ackley modificada para $x,y\in[0,20]$}
+    \end{figure}
+
     \subsubsection{Función de Ackley} Propuesta en \cite{AckleyFunction} se define como
     \[-20 \cdot exp[-0.2 \cdot \sqrt{0.5 \cdot (x^2 + y^2)}] - exp[0.5 ( \cos(2 \pi x)
     + \cos(2 \pi y))] + e + 20)\]
-    Al estar pensada para minimización y definida en el intervalo $[-5,5]$, consideramos la función $f'(x,y)=-f(x-5, y-5)$. Se trata de una función no convexa, con una gran cantidad de máximos locales, como puede apreciarse en la \refcruzada{Fig.}{fig:2}, siendo el máximo absoluto el punto $(5,5)$
+    Al estar pensada para minimización y definida en el intervalo $[-5,5]$, consideramos la función $f'(x,y)=(-1)\cdot f(x-5, y-5)$. Se trata de una función no convexa, con una gran cantidad de máximos locales, como puede apreciarse en la \refcruzada{Fig.}{fig:2:b}, siendo el máximo absoluto el punto $(5,5)$.
+    
+    Los resultados tras 1\,300 iteraciones es el de la \refcruzada{Fig.}{fig:3}, como puede verse, se produce una convergencia casi total hace el punto $(5,5)$, sin embargo el mapa de feromonas construido no es útil, pues prácticamente todos los valores son de módulo cero.
 
-    \begin{figure}
-        \includegraphics[scale=0.5]{graficas_ackley}
-        \centering
-        \caption{}
-        \label{fig:2}
-    \end{figure}
+    \begin{figure}[htbp]
+		\centering
+		\includegraphics[width=0.5\textwidth]{Resultado_ackley}
+		\label{fig:3}
+		\caption{Resultados experimentales empleando la función Ackley}
+	\end{figure}
 
+    \subsubsection{Función de Himmelblau} Propuesta en \cite{HimmelblauFunction} se define como
+    \[  -(x^2 + y - 11)^2 - (x + y^2 - 7)^2  \] para maximización, contiene una meseta en la parte superior, por lo que no existe una única solución (ver \refcruzada{Fig.}{fig:4}.
+
+    \begin{figure}[htbp]
+	\centering
+	\includegraphics[width=0.8\textwidth]{Resultado_himmelblau}
+	\label{fig:4}
+	\caption{Resultados experimentales empleando la función Ackley}
+\end{figure}
+
+\comment{
     \subsubsection{Funcion Lineal}
-    $f(x,y)=-(x-g_x)^2 - (y - g_y)^2 + 700$; con maximo en $(g_x,g_y)$
-
+    $f(x,y)=-(x-g_x)^2 - (y - g_y)^2 + 700$; con máximo en $(g_x,g_y)$
+}
     \subsection{Pruebas con obstáculos}
 
 

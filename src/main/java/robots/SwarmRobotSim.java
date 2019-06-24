@@ -71,7 +71,7 @@ public class SwarmRobotSim extends SimState {
         super.start();
         if (space != null) space.clear();
         this.bestPosition = null;
-        this.bestFitness = 0;
+        this.bestFitness = Double.NEGATIVE_INFINITY;
 //        // set configuration
 //        usePredefinedPheromoneMap();
 //        buildPheromoneMap();
@@ -212,9 +212,10 @@ public class SwarmRobotSim extends SimState {
     }
 
     public void setExploreMode(boolean exploreMode) {
-        for (Object r: this.space.getAllObjects()) {
-            ((Robot) r).exploreMode=exploreMode;
-        }
+        if (this.space != null)
+            for (Object r : this.space.getAllObjects()) {
+                ((Robot) r).exploreMode = exploreMode;
+            }
     }
 
     boolean buildPheromoneMap = false;
