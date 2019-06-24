@@ -1,7 +1,6 @@
 package functions;
 
 import sim.util.Double2D;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import static java.lang.Math.*;
 
@@ -19,7 +18,7 @@ public class TestFunctionAckley implements TestFunction {
 
     @Override
     public Double2D gradient(int x, int y) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     private double f(double x, double y) {
