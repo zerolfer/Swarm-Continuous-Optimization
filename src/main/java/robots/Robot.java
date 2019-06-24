@@ -89,7 +89,7 @@ public class Robot implements Steppable {
 
         double fitness_newPosition = swarm.function.fitness(newPosition);
         double f = (fitness_newPosition - swarm.function.fitness(currentPosition));
-        if (f > 0 && swarm.function.fitness(localBestPosition) > fitness_newPosition) {
+        if (swarm.function.fitness(localBestPosition) < fitness_newPosition) {
             this.localBestPosition = newPosition; // update best local position
 
             // if the soFIlution is better than the best of the swarm, we safe the data
