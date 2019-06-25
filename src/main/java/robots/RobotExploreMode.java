@@ -8,9 +8,9 @@ import static robots.Robot.MAX_ROT_ITER;
 class RobotExploreMode {
 
     private final Robot bot;
-    private double socialLearningFactor = 1;
-    //    private double selfLearningFactor = 0;
-    private double inertia = 1;
+    private double socialLearningFactor = 1; // because the movement should go to promising positions
+//    private double selfLearningFactor = 0;
+    private double inertia = 1;  // because we want movement
 
 
     RobotExploreMode(Robot bot) {
@@ -20,13 +20,9 @@ class RobotExploreMode {
     void execute(SwarmRobotSim swarm) {
         Double2D currentPosition = swarm.space.getObjectLocation(bot);
 
-        double initialSocialLearningFactor = 0;
-        double initialSelfLearningFactor = 0;
-        double initialInertia = 0;
-
-        initialInertia = swarm.getInertiaWeight();
-        initialSocialLearningFactor = swarm.getSocialLearningFactor();
-//        initialSelfLearningFactor = swarm.getSelfLearningFactor();
+        double initialSocialLearningFactor = swarm.getSocialLearningFactor();
+//        double initialSelfLearningFactor = swarm.getSelfLearningFactor();
+        double initialInertia = swarm.getInertiaWeight();
 
         swarm.setInertiaWeight(inertia);
         swarm.setSocialLearningFactor(socialLearningFactor);
@@ -34,7 +30,7 @@ class RobotExploreMode {
 
         Double2D[] raw = bot.readPheromones(swarm, currentPosition);
         Double2D socialData = raw[0];
-        Double2D newPosition = raw[1];
+        Double2D newPosition;
 
         double pos_x, pos_y;
 
@@ -82,7 +78,7 @@ class RobotExploreMode {
 
         swarm.setSocialLearningFactor(initialSocialLearningFactor);
         swarm.setInertiaWeight(initialInertia);
-        swarm.setSelfLearningFactor(initialSelfLearningFactor);
+//        swarm.setSelfLearningFactor(initialSelfLearningFactor);
     }
 
 }

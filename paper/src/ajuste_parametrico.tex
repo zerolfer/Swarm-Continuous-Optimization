@@ -1,0 +1,29 @@
+\newcommand{\prefacnota}{\footnote{
+		Índice que representa la granularidad del entorno descrita en el \refcruzada{Apartado}{sec:espacio}
+	}}
+
+\subsection{Ajuste paramétrico}
+Los parámetros empleados por el algoritmo en todas las ejecuciones mostradas en éste documento se encuentran recogidos en la \refcruzada{Tabla}{tabla:1}
+\begin{savenotes}
+	\begin{table}[]
+	   	\centering
+	    \caption{Parámetros del algoritmo y sus respectivos valores}
+		\begin{tabular}{|l|c|}
+			\hline
+			Parameter                      & Exploit Mode / Explore Mode                      \\ 
+			\hline
+			Num. Robots                    & 50                                               \\
+			$\omega$ (inertia)             & 0.5 / 1                                          \\
+			$c_1$ (self learning factor)   & 0.5                                              \\
+			$c_2$ (social learning factor) & 0.5 / 1                                          \\
+			$c_d$ (evaporation factor)     & 0.5                                              \\
+			$c_a$ (superposition factor)   & 0.5                                              \\
+			Iteraciones Maximas            & 600                                              \\
+			Exploring iterations           & 20                                               \\
+			Max velocity                   & 1                                                \\
+			Precision Factor\prefacnota    & 20                                               \\ \hline
+		\end{tabular}
+    	\label{tabla:1}
+	\end{table}
+\end{savenotes}
+
