@@ -27,9 +27,12 @@
 
 \newcommand{\comment}[1]{}
 
-\newcommand{\addfigure}[2]{\begin{figure}
+\newcommand{\addfigure}[2]{
+							\begin{figure}
                                \includegraphics[scale=0.5]{#1} \centering \caption{#2} \label{fig:1}
-\end{figure}}
+							\end{figure}
+}
+
 
 % Used for displaying a sample figure. If possible, figure files should
 % be included in EPS format.
@@ -40,8 +43,9 @@
 %
 %
 \begin{document}
+%	\interfootnotelinepenalty=10000
     %
-    \title{Contribution Title\thanks{Trabajo desarrollado como proyecto final de la asignatura \textit{Agentes inteligentes y sistemas multiagente} del Máster Universitario en Inteligencia Artificial de la Universidad Politécnica de Madrid}}
+    \title{Swarm Robot Intelligence: Optimización y evitación de obstáculos\thanks{Trabajo desarrollado como proyecto final de la asignatura \textit{Agentes inteligentes y sistemas multiagente} del Máster Universitario en Inteligencia Artificial de la Universidad Politécnica de Madrid}}
     %
     %\titlerunning{Abbreviated paper title}
     % If the paper title is too long for the running head, you can set
@@ -76,14 +80,23 @@
     En los últimos años se ha observado que existen diversos problemas cuya naturaleza requiere de un enfoque multi-agente, pues un único agente no es capaz de resolverlos.
     Utilizando la Inteligencia Colectiva (CI), ya sea mediante una comunicación directa o indirecta entre los agentes, se han podido resolver problemas tanto en el ámbito de la robótica, tales como la planificación de rutas o construcción de estructuras complejas \cite{collectiveConstruction}, así como en el ámbito de la optimización, esto es, de encontrar la mejor solución --o al menos, una de buena calidad-- para un problema dado.
     En este artículo, analizaremos un posible sistema multiagente propuesto inicialmente en ~\cite{initialPaper}  con el objetivo de hallar la posición óptima de un espacio de búsqueda y su comportamiento frente a obstáculos físicos.
-    La descripción del problema y las técnicas empleadas para su solución se encuentra en el \refcruzada{Apartado}{sec:descripcion}, y los resultados experimentales y el ajuste paramétrico en el \refcruzada{Apartado}{sec:}. %TODO poner referencias!!
+    La descripción del problema y las técnicas empleadas para su solución se encuentra en el \refcruzada{Apartado}{sec:descripcion}, y los resultados experimentales y el ajuste paramétrico en el \refcruzada{Apartado}{sec:resultados}. %TODO poner referencias!!
     
+    %
+    %
 	\input{descripcion_del_problema}
+	%
+	%
 	
+	%
+	%
 	\input{resultados_experimentales}
+	%
+	%
 
-
-
+	\section{Trabajo Futuro}
+	El siguiente paso para éste proyecto será de encontrar una técnica que brinde mayor inteligencia en el modo de exploración, que permita sortear obstáculos de un tamaño considerable.
+	
 
 
 
