@@ -25,6 +25,8 @@ Built in Python used to plot and acquire the images of the 3D graphs.
 
 Uses the Python's library `matplotlib` to plotting.
 
+<img alt="Graph plot" src="paper/src/img/funciones/graficas_ackley.png" height="300">
+
 
 ### Paper module
 Written in LaTeX. It documents some important analysis carried out on the _Main module_ and collects all results of the behavior 
