@@ -15,6 +15,7 @@ The project is divided in 3 different modules each one used for a different func
 
 ### Main module.
 Built in Java JDK 8. Created upon the multiagent simulation java library [MASON](https://cs.gmu.edu/~eclab/projects/mason/).
+I also use Maven Framework to the libraries managing.
 
 Is used as the main source of the project, all the analysis documented in the _Paper module_ are done over this one.
 
