@@ -2,25 +2,25 @@
     \section{Descripción del problema}
     \label{sec:descripcion}
     Tal y como se ha introducido anteriormente, el problema a resolver se basa en realizar una búsqueda dentro de un espacio bidimensional limitado a un cierto tamaño. Trataremos de maximizar una función conocida $f(x,y)$, sujeta a las restricciones de espacio impuestas inicialmente, es decir, al tamaño del mapa por el que se moverán los agentes.
-    Para su desarrollo, se ha utilizado como base la técnica propuesta por ~\cite{initialPaper}, sin embargo ésta no contempla el uso de obstáculos --ciertas posiciones del espacio que no pueden ser traspasados por el robot-- dentro del espacio de búsqueda, por lo que se ha extendido y adaptado.
-    En el \refcruzada{Apartado}{sec:resultados} se muestran algunos ejemplos que lo ilustran, utilizando tanto obstáculos como diferentes funciones objetivo. %TODO referencias
+    Para su desarrollo, se ha utilizado como base la técnica propuesta por ~\cite{initialPaper}, sin embargo, ésta no contempla el uso de obstáculos --ciertas posiciones del espacio que no pueden ser traspasados por el robot-- dentro del espacio de búsqueda, por lo que se ha extendido y adaptado.
+    En el \refcruzada{Apartado}{sec:resultados} se muestran algunos ejemplos que lo ilustran, utilizando tanto obstáculos como diferentes funciones objetivo.
 
 
     \subsection{El espacio de búsqueda}
     \label{sec:espacio}
 
-    La representación propuesta en ~\cite{initialPaper} consiste en discretizar el espacio de búsqueda en forma de una cuadrícula (\textit{grid}). Ésta es una de las formas clásicas más sencillas de representar un espacio de búsqueda, sin embargo, tal y como se apuntan en ~\cite{AIRobotics}, este tipo de representación conlleva a una \textit{digitalización} o discretización del espacio con una cierta granularidad dada. A mayor granularidad, mayor fidelidad en la representación del espacio. En el artículo original, se utiliza una única granularidad sobre una cuadrícula $10 \times 10$. En el \refcruzada{Apartado}{sec:resultados} se prueban diferentes tamaños. %TODO es esto cierto??
+    La representación propuesta en ~\cite{initialPaper} consiste en discretizar el espacio de búsqueda en forma de una cuadrícula (\textit{grid}). Ésta es una de las formas clásicas más sencillas de representar un espacio de búsqueda, sin embargo, tal y como se apuntan en ~\cite{AIRobotics}, este tipo de representación conlleva a una \textit{digitalización} o discretización del espacio con una cierta granularidad dada. A mayor granularidad, mayor fidelidad en la representación del espacio. En el artículo original, se utiliza una única granularidad sobre una cuadrícula $10 \times 10$. En el \refcruzada{Apartado}{sec:resultados} se prueban diferentes tamaños.
 
     Podemos considerar el espacio de búsqueda a efectos prácticos, como una colina tridimensional donde la tercera dimensión representa la intensidad de una señal que sigue una función (no necesariamente lineal). La finalidad del sistema es que los agentes colaboren para alcanzar el punto más álgido.
 
     \subsection{La estrategia de resolución}
 
-    Los agentes llevan a cabo movimientos sencillos empleando información en común entre sí, pero de forma indirecta, a través del medio. Éste tipo de soluciones reciben el nombre de sistemas basados en \textit{estigmergia}~\cite{stigmergy}.
+    Los agentes llevan a cabo movimientos sencillos empleando información en común entre sí, pero de forma indirecta, a través del medio. Este tipo de soluciones reciben el nombre de sistemas basados en \textit{estigmergia}~\cite{stigmergy}.
 
     % lo muevo como parrafo para evitar un bad-box
     Como buen sistema multiagente, podemos observar una capacidad de auto-organización (\textit{self-organization}), mediante el cual emerge un comportamiento de características más complejas, que en este caso consisten en localizar y converger a un lugar concreto del mapa.
 
-    En este enfoque, los agentes se moverán libremente por el espacio, sin limitarse a la cuadrícula, y depositarán en las respectivas celdas sobre las que se encuentren, una información dada que llamaremos feromonas, que estarán representadas mediante un vector cuya dirección y sentido sea la más prometedora del espacio y cuyo módulo será proporcional a la mejora que aporta dicho movimiento al valor de la función objetivo. El cálculo de dichas feromonas se lleva a cabo siguiendo una estrategia basada en un sistema PSO (\textit{Particle Swarm Optimization})~\cite{PSO} combinado con información heurística dada por la función objetivo según las formulas descritas en el articulo \cite{initialPaper}, mientras que el depósito y combinación de las feromonas en el entorno se basa en este caso en los sistemas ACO (\textit{Ant Colony Optimization})~\cite{ACO}.
+    En este enfoque, los agentes se moverán libremente por el espacio, sin limitarse a la cuadrícula, y depositarán en las respectivas celdas sobre las que se encuentren, una información dada que llamaremos feromonas, que estarán representadas mediante un vector cuya dirección y sentido sea la más prometedora del espacio y cuyo módulo será proporcional a la mejora que aporta dicho movimiento al valor de la función objetivo. El cálculo de dichas feromonas se lleva a cabo siguiendo una estrategia basada en un sistema PSO (\textit{Particle Swarm Optimization})~\cite{PSO} combinado con información heurística dada por la función objetivo según las fórmulas descritas en el artículo \cite{initialPaper}, mientras que el depósito y combinación de las feromonas en el entorno se basa en este caso en los sistemas ACO (\textit{Ant Colony Optimization})~\cite{ACO}.
 
     Nótese que la dirección vendrá dada por la posición hacia la que se está moviendo el robot, mientras que el sentido y el módulo del mismo dependerá de la función objetivo de forma directamente proporcional a ésta.
 
