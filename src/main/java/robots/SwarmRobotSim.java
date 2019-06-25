@@ -83,7 +83,10 @@ public class SwarmRobotSim extends SimState {
         space = new Continuous2D(precisionFactor, map.getWidth(), map.getHeight());
         pheromoneGrid = new ObjectGrid2D(map.getWidth(), map.getHeight());
 
-        function = functions.get(1); // 0: lineal, 1: Ackley, 2: Himmelblau
+        ///////////////////////////////////////
+        // initialize the objective function //
+        ///////////////////////////////////////
+        function = functions.get(0); // 0: lineal, 1: Ackley, 2: Himmelblau
 
         /////////////////////////////////////
         // initialize the pheromone matrix //
