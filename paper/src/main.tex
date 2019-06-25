@@ -60,10 +60,13 @@
     \maketitle              % typeset the header of the contribution
     %
     \begin{abstract}
-        The abstract should briefly summarize the contents of the paper in
-        150--250 words.
+        En este documento se analiza el comportamiento de un sistema multiagente basado en PSO y ACO
+        que emplea feromonas vectoriales para encontrar posiciones óptimas dentro de un mapa. 
+        Se analiza el comportamiento del sistema frente a obstáculos y frente a diferentes funciones
+        de optimización diferentes a la lineal, concretamente las funciones de Ackley y Himmelblau
+        empleadas comúnmente para pruebas de sistemas de optimización multivariable uniobjetivo.
 
-        \keywords{First keyword  \and Second keyword \and Another keyword.}
+        \keywords{Optimización \and Multiagente \and Obstáculos \and Robótica}
     \end{abstract}
     %
     %
@@ -74,156 +77,10 @@
     Utilizando la Inteligencia Colectiva (CI), ya sea mediante una comunicación directa o indirecta entre los agentes, se han podido resolver problemas tanto en el ámbito de la robótica, tales como la planificación de rutas o construcción de estructuras complejas \cite{collectiveConstruction}, así como en el ámbito de la optimización, esto es, de encontrar la mejor solución --o al menos, una de buena calidad-- para un problema dado.
     En este artículo, analizaremos un posible sistema multiagente propuesto inicialmente en ~\cite{initialPaper}  con el objetivo de hallar la posición óptima de un espacio de búsqueda y su comportamiento frente a obstáculos físicos.
     La descripción del problema y las técnicas empleadas para su solución se encuentra en el \refcruzada{Apartado}{sec:descripcion}, y los resultados experimentales y el ajuste paramétrico en el \refcruzada{Apartado}{sec:}. %TODO poner referencias!!
-
-    \section{Descripción del problema}
-    \label{sec:descripcion}
-    Tal y como se ha introducido anteriormente, el problema a resolver se basa en realizar una búsqueda dentro de un espacio bidimensional limitado a un cierto tamaño. Trataremos de maximizar una función conocida $f(x,y)$, sujeta a las restricciones de espacio impuestas inicialmente, es decir, al tamaño del mapa por el que se moverán los agentes.
-    Para su desarrollo, se ha utilizado como base la técnica propuesta por ~\cite{initialPaper}, sin embargo ésta no contempla el uso de obstáculos --ciertas posiciones del espacio que no pueden ser traspasados por el robot-- dentro del espacio de búsqueda, por lo que se ha extendido y adaptado.
-    En el \refcruzada{Apartado}{3} se muestran algunos ejemplos que lo ilustran, utilizando tanto obstáculos como diferentes funciones objetivo. %TODO referencias
-
-
-    \subsection{El espacio de búsqueda}
-    \label{sec:espacio}
     
-    La representación propuesta en ~\cite{initialPaper} consiste en discretizar el espacio de búsqueda en forma de una cuadrícula (\textit{grid}). Ésta es una de las formas clásicas más sencillas de representar un espacio de búsqueda, sin embargo, tal y como se apuntan en ~\cite{AIRobotics}, este tipo de representación conlleva a una \textit{digitalización} o discretización del espacio con una cierta granularidad dada. A mayor granularidad, mayor fidelidad en la representación del espacio. En el artículo original, se utiliza una única granularidad sobre una cuadrícula $10 \times 10$. En el \refcruzada{Apartado}{3} se prueban diferentes tamaños. %TODO es esto cierto??
-
-    Podemos considerar el espacio de búsqueda a efectos prácticos, como una colina tridimensional donde la tercera dimensión representa la intensidad de una señal que sigue una función (no necesariamente lineal). La finalidad del sistema es que los agentes colaboren para alcanzar el punto más álgido.
-
-    \subsection{La estrategia de resolución}
-
-    Los agentes llevan a cabo movimientos sencillos empleando información en común entre sí, pero de forma indirecta, a través del medio. Éste tipo de soluciones reciben el nombre de sistemas basados en \textit{estigmergia}~\cite{stigmergy}.
-
-    % lo muevo como parrafo para evitar un bad-box
-    Como buen sistema multiagente, podemos observar una capacidad de auto-organización (\textit{self-organization}), mediante el cual emerge un comportamiento de características más complejas, que en este caso consisten en localizar y converger a un lugar concreto del mapa.
-
-    En este enfoque, los agentes se moverán libremente por el espacio, sin limitarse a la cuadrícula, y depositarán en las respectivas celdas sobre las que se encuentre, una información dada que llamaremos feromonas, que estarán representadas mediante un vector cuya dirección y sentido sea la más prometedora del espacio y cuyo módulo será proporcional a la mejora que aporta dicho movimiento al valor de la función objetivo. El cálculo de dichas feromonas se lleva a cabo siguiendo una estrategia basada en un sistema PSO (\textit{Particle Swarm Optimization})~\cite{PSO} combinado con información heurística dada por la función objetivo según las formulas descritas en el articulo \cite{initialPaper}, mientras que el depósito y combinación de las feromonas en el entorno se basa en este caso en los sistemas ACO (\textit{Ant Colony Optimization})~\cite{ACO}.
-
-    Nótese que la dirección vendrá dada por la posición hacia la que se está moviendo el robot, mientras que el sentido y el módulo del mismo dependerá de la función objetivo de forma directamente proporcional a ésta.
-
-    Por último, para poder evitar los obstáculos (y también óptimos locales), en caso de que el agente no sea capaz de mejorar su mejor solución local tras un número máximo de iteraciones, se generará una nueva velocidad con dirección y sentido arbitrario, y con módulo $V_{max}$, la velocidad máxima posible de los agentes (es el llamado modo explorar). En caso de no poder sortear el obstáculo, se trata durante otro cierto número de iteraciones, de rotar el vector velocidad generado anteriormente una cantidad de grados, en este caso de $10$ (ésto último se encuentra descrito en~\cite{referencedPaper}).
-
-
-    \section{Resultados experimentales}
-
-    % TODO: poner tablas con los valores de todos los parámetros del sistema
-
-\input{ajuste_parametrico}
-
-    \subsection{Variaciones en la función objetivo}
-    En el artículo original \cite{initialPaper} únicamente se utilizaba una función lineal, cuyo punto máximo se hallaba en el $(8,8)$ de una cuadrícula de $10\times10$, ésto es así debido a que el enfoque de sus autores no era la optimización de la misma, sino una futura implementación a nivel físico, donde la función objetivo sería implementada mediante una señal (acústica o lumínica). Para analizar el potencial de éste sistema, se han probado algunas funciones de optimización conocidas, recopiladas en \cite{WebFuncionesOptimizacion}.
-
-    \subsubsection{Función de Ackley} Propuesta en \cite{AckleyFunction} se define como
-    \[ f(x,y)=-20 \cdot exp[-0.2 \cdot \sqrt{0.5 \cdot (x^2 + y^2)}] - exp[0.5 ( \cos(2 \pi x)
-    + \cos(2 \pi y))] + e + 20)\]
-    Al estar pensada para minimización y definida en el intervalo $[-5,5]$, consideramos la función $f'(x,y)=(-1)\cdot f(x-5, y-5)$. Se trata de una función no convexa, con una gran cantidad de máximos locales, como puede apreciarse en la \refcruzada{Fig.}{fig:2:b}, siendo el máximo absoluto el punto $(5,5)$.
-
-    \begin{figure}[htbp]
-        \centering
-        \subfigure[Gráfica sobre 3 ejes]{
-        \includegraphics[width=0.4\textwidth]{funciones/graficas_ackley}
-        \label{fig:2:a}
-        }
-        \subfigure[Curvas de nivel]{
-        \includegraphics[width=0.5\textwidth]{funciones/graficas_ackley_contorno}
-        \label{fig:2:b}
-        }
-        \caption{Representación de la función Ackley modificada para $x,y\in[0,20]$}
-    \end{figure}
-
-    Los resultados tras 1\,300 iteraciones es el de la \refcruzada{Fig.}{fig:3}, como puede verse, se produce una convergencia casi total hace el punto $(5,5)$, sin embargo el mapa de feromonas construido no es útil, pues prácticamente todos los valores son de módulo cero.
-
-    \begin{figure}[htbp]
-        \centering
-        \includegraphics[width=0.4\textwidth]{funciones/Resultado_ackley}
-        \caption{Resultados experimentales empleando la función Ackley}
-        \label{fig:3}
-    \end{figure}
-
-    \subsubsection{Función de Himmelblau} Propuesta en \cite{HimmelblauFunction} se define para el caso de una maximización como
-    \[  f(x,y)=-(x^2 + y - 11)^2 - (x + y^2 - 7)^2  \]
-    Contiene una meseta en la parte superior, por lo que no existe una única solución (ver \refcruzada{Fig.}{fig:4}).
-    En cuanto a los resultados obtenidos, mostrados en la \refcruzada{Fig.}{fig:5}, el sistema no es capaz de converger, en su lugar, se forman 3 grupos de agentes en torno a los 4 posibles óptimos que tiene la función (ver \cite{WebFuncionesOptimizacion} para más información)
-
-
-    \begin{figure}[htbp]
-        \centering
-        \subfigure[Gráfica sobre 3 ejes]{
-        \includegraphics[width=0.4\textwidth]{funciones/graficas_himmelblau}
-        }
-        \subfigure[Curvas de nivel]{
-        \includegraphics[width=0.5\textwidth]{funciones/graficas_himmelblau_contorno}
-        }
-        \caption{Representación de la función Himmelblau modificada para $x,y\in[0,10]$}
-        \label{fig:4}
-    \end{figure}
-
-    \begin{figure}[htbp]
-        \centering
-        \includegraphics[width=0.4\textwidth]{funciones/Resultados_himmelblau_10x10}
-        \caption{Resultados experimentales empleando la función Himmelblau sobre una cuadricula $10\times10$}
-        \label{fig:5}
-    \end{figure}
-
-    \comment{
-    \subsubsection{Función Lineal}
-    $f(x,y)=-(x-g_x)^2 - (y - g_y)^2 + 700$; con máximo en $(g_x,g_y)$
-    }
-    \subsection{Pruebas con obstáculos}
-
-    En esta sección, se ha tomado la función objetivo lineal de \cite{initialPaper} añadiendo celdas de color negro que representan posiciones del espacio que las partículas no pueden atravesar.
-
-    En estas ejecuciones, su suceden 20 iteraciones de exploración cada vez que el agente no sea capaz de encontrar una solución local que mejore sus resultados. Observamos convergencia tras 600 iteraciones.
-
-    En el obstáculo 1 (\refcruzada{Fig.}{fig:6}) debido a que el obstáculo no es demasiado grande, todos los agentes logran evitarlo y converger hacia la mea exitosamente.
-
-    %%%%%%%%%%%%%%%
-    % Obstáculo 1 %
-    %%%%%%%%%%%%%%%
-    \begin{figure}[htbp]
-        \centering
-        %        \subfigure[iteraciones=0]{
-        %        \includegraphics[width=0.3\textwidth]{obstaculos/obstaculo1_inicio}
-        %        }
-        \subfigure[iteraciones=20]{
-        \includegraphics[width=0.3\textwidth]{obstaculos/obstaculo1_tras23iteraciones_exploremode}
-        }
-        \subfigure[iteraciones=40]{
-        \includegraphics[width=0.3\textwidth]{obstaculos/obstaculo1_tras40iteraciones.png}
-        }
-        \subfigure[Iteraciones=600]{
-        \includegraphics[width=0.3\textwidth]{obstaculos/obstaculo1_inicio_tras_600_iteraciones}
-        }
-        \caption{Ejecución con un obstáculo convexo}
-        \label{fig:6}
-    \end{figure}
-
-    Si empleamos un obstáculo mayor, como el de la \refcruzada{Fig.}{fig:8} los agentes no son capaces de sortear por completo el obstáculo inferior, pues los movimientos necesarios para recorrerlo y evitarlo son mucho mayores. Se necesita de una técnica con mayor inteligencia.
-
-    %%%%%%%%%%%%%%%
-    % Obstáculo 3 %
-    %%%%%%%%%%%%%%%
-    \begin{figure}[htbp]
-        \centering
-        %	\subfigure[iteraciones=0]{
-        %		\includegraphics[width=0.4\textwidth]{obstaculos/obstaculo2_inicio}
-        %	}
-        \subfigure[iteraciones=20]{
-        \includegraphics[width=0.3\textwidth]{obstaculos/obstaculo3_tras20iteraciones_exploremode}
-        }
-        \subfigure[iteraciones=40]{
-        \includegraphics[width=0.3\textwidth]{obstaculos/obstaculo3_tras49iteraciones_exploitmode}
-        }
-        \subfigure[Iteraciones=600]{
-        \includegraphics[width=0.3\textwidth]{obstaculos/obstaculo3_inicio_tras_600_iteraciones}
-        }
-        \caption{Ejecución con un obstáculo cóncavo}
-        \label{fig:8}
-    \end{figure}
-
-
-
-
-
+	\input{descripcion_del_problema}
+	
+	\input{resultados_experimentales}
 
 
 
@@ -293,9 +150,9 @@
             \hline
             Heading level & Example & Font size and style\\
             \hline
-            Title (centered)  & {\Large\bfseries Lecture Notes}                 & 14 point, bold   \\
+            Title (centered)  & {\Large\bfseries Lecture Notes}                  & 14 point, bold   \\
             1st-level heading & {\large\bfseries 1 Introduction}                 & 12 point, bold   \\
-            2nd-level heading & {\bfseries 2.1 Printing Area}                     & 10 point, bold   \\
+            2nd-level heading & {\bfseries 2.1 Printing Area}                    & 10 point, bold   \\
             3rd-level heading & {\bfseries Run-in Heading in Bold.} Text follows & 10 point, bold   \\
             4th-level heading & {\itshape Lowest Level Heading.} Text follows & 10 point, italic \\
             \hline
