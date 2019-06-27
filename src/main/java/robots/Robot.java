@@ -41,6 +41,14 @@ public class Robot implements Steppable {
         noExploreRobot = new RobotNoExploreMode(this);
     }
 
+    Double2D generateRandomVelocity(SwarmRobotSim swarm) {
+        double vel_x = swarm.random.nextDouble() * swarm.getMaxVelocity(),
+                vel_y = swarm.random.nextDouble() * swarm.getMaxVelocity();
+        if (swarm.random.nextBoolean()) vel_x *= -1;
+        if (swarm.random.nextBoolean()) vel_y *= -1;
+        return new Double2D(vel_x, vel_y);
+    }
+
     @Override
     public void step(SimState state) {
         SwarmRobotSim swarm = (SwarmRobotSim) state;
