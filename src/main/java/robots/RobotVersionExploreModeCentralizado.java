@@ -130,7 +130,6 @@ public class RobotVersionExploreModeCentralizado implements Steppable {
 
 //        System.out.println(getClass().getName() + "@" + Integer.toHexString(hashCode()) + "  at " + toString());
 
-//        if(swarm.bestPosition==null||Utils.esMejor(f(swarm.bestPosition),f(newPosition))) // TODO:a implementar
     }
 
     Double2D rotateVelocityDegrees(int degrees, SwarmRobotSim swarm) {
